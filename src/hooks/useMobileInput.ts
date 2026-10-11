@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react';
 
-/** True on touch/coarse-pointer devices (phones, tablets). */
+/** True on touch/coarse-pointer devices (phones, tablets). Live-updates. */
 export function useCoarsePointer(): boolean {
-  const [coarse] = useState(
+  const [coarse, setCoarse] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
   );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: coarse)');
+    const onChange = () => setCoarse(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
   return coarse;
 }
 

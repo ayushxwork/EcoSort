@@ -158,6 +158,7 @@ export function createLitterScatter(
 
   // ── Hover/rotation animation state ────────────────────────────────────────
   const baseY = scattered.map((s) => s.mesh.position.y);
+  const handPosScratch = new THREE.Vector3();
 
   function update(playerPos: THREE.Vector3, elapsed: number, _delta: number) {
     scattered.forEach((item, idx) => {
@@ -190,7 +191,7 @@ export function createLitterScatter(
           const mats = Array.isArray(child.material) ? child.material : [child.material];
           mats.forEach((m) => {
             if (m instanceof THREE.MeshStandardMaterial) {
-              m.emissive = new THREE.Color(glowColor ?? 0x000000);
+              m.emissive.setHex(glowColor ?? 0x000000);
               m.emissiveIntensity = glowColor ? 0.35 + 0.15 * Math.sin(elapsed * 4) : 0;
             }
           });
@@ -200,8 +201,8 @@ export function createLitterScatter(
 
     // Follow player when picked up (attach to hand position)
     if (heldItem) {
-      const handPos = playerPos.clone().add(new THREE.Vector3(0.4, 1.1, -0.3));
-      heldItem.mesh.position.lerp(handPos, 0.18);
+      handPosScratch.set(playerPos.x + 0.4, playerPos.y + 1.1, playerPos.z - 0.3);
+      heldItem.mesh.position.lerp(handPosScratch, 0.18);
       heldItem.mesh.rotation.y += 0.04;
     }
   }

@@ -28,35 +28,35 @@ const HERO_ADVENTURES: HeroAdventure[] = [
   {
     id: 1,
     title: 'Kitchen sort',
-    image: '/images/hero-action-1.png',
+    image: '/images/hero-action-1.webp',
     badge: '🍳 Kitchen',
     desc: 'Kai puts food scraps in the green bin and cardboard in the blue bin.'
   },
   {
     id: 2,
     title: 'School run',
-    image: '/images/hero-action-2.png',
+    image: '/images/hero-action-2.webp',
     badge: '🏫 School',
     desc: 'Kai collects used paper and bottles for the blue dry bin.'
   },
   {
     id: 3,
     title: 'Park cleanup',
-    image: '/images/hero-action-3.png',
+    image: '/images/hero-action-3.webp',
     badge: '🌳 Park',
     desc: 'Kai puts glass jars in the cyan reuse box at the park.'
   },
   {
     id: 4,
     title: 'Battery drop',
-    image: '/images/hero-action-4.png',
+    image: '/images/hero-action-4.webp',
     badge: '🏥 Hospital',
     desc: 'Kai puts old batteries in the red hazardous bin.'
   },
   {
     id: 5,
     title: 'Town lights on',
-    image: '/images/hero-action-5.png',
+    image: '/images/hero-action-5.webp',
     badge: '🌙 Night',
     desc: 'The town lights turn on after a full day of correct waste sorting.'
   }
@@ -131,6 +131,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
     return () => obs.disconnect();
   }, []);
 
+  /* ── Artwork lightbox: body scroll lock + Escape to close ─────────────── */
+  useEffect(() => {
+    if (!isArtworkModalOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsArtworkModalOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isArtworkModalOpen]);
+
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
@@ -145,7 +160,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       <section
         id="main-content"
         tabIndex={-1}
-        className="bg-slate-950 text-white border-b-2 border-slate-900 py-3 overflow-hidden select-none"
+        className="bg-slate-950 text-white border-b-2 border-slate-900 py-2 sm:py-3 overflow-hidden select-none"
       >
         <div
           className="animate-marquee whitespace-nowrap flex items-center gap-6 font-fun font-bold text-xs sm:text-sm uppercase tracking-wider text-amber-300"
@@ -188,6 +203,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
           <span className="text-emerald-400">◇</span>
           <span>ADAPTIVE PRACTICE ENGINE</span>
           <span className="text-emerald-400">◇</span>
+          <span>BUILT WITH AWS CLOUD</span>
+          <span className="text-emerald-400">◇</span>
+          <span>CHILD PRIVACY SAFE</span>
+          <span className="text-emerald-400">◇</span>
         </div>
       </section>
 
@@ -204,17 +223,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             <div className="flex flex-wrap items-center gap-2.5 reveal">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-300 text-slate-950 border-2 border-slate-900 font-fun font-black text-xs uppercase tracking-wider shadow-retro-sm">
                 <img
-                  src="/images/hero-avatar.png"
+                  src="/images/hero-avatar.webp"
                   alt="Kai the Eco Hero"
                   className="w-5 h-5 rounded-full border border-slate-900 object-cover"
                 />
                 <span>PLAY AS KAI • YOUNG ECO HERO</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950 text-amber-300 border-2 border-slate-900 font-fun font-black text-xs uppercase tracking-wider shadow-retro-sm">
+              <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950 text-amber-300 border-2 border-slate-900 font-fun font-black text-xs uppercase tracking-wider shadow-retro-sm">
                 <span>🏛</span>
                 <span>3D WASTE SORTING DRILL</span>
               </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-slate-900 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
+              <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-slate-900 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
                 <span>🌐</span>
                 <span>3D IN THE BROWSER</span>
               </div>
@@ -222,7 +241,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
 
             {/* Heading — B5 gradient: light theme #000000 → #666666 on base copy */}
             <div className="space-y-1 sm:space-y-2 reveal reveal-delay-1">
-              <h1 className="font-fun font-black text-6xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.92] uppercase">
+              <h1 className="font-fun font-black text-[clamp(2.5rem,11vw,3.5rem)] sm:text-7xl lg:text-8xl tracking-tight leading-[0.92] uppercase">
                 <span className="bg-gradient-to-r from-slate-950 to-slate-600 bg-clip-text text-transparent">
                   SORT <br />THE WASTE.
                 </span>
@@ -243,7 +262,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             </p>
 
             {/* Action buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2 reveal reveal-delay-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2 reveal reveal-delay-3">
               <button
                 onClick={onStartGame}
                 className="tactile-btn px-8 py-4 bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-black text-base sm:text-lg rounded-2xl border-[3px] border-slate-950 shadow-retro-lg inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
@@ -264,14 +283,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             {/* Meet Kai banner */}
             <div className="p-3.5 sm:p-4 rounded-2xl bg-white border-2 border-slate-900 shadow-retro flex items-center gap-3.5 max-w-xl reveal reveal-delay-4">
               <img
-                src="/images/hero-avatar.png"
+                src="/images/hero-avatar.webp"
                 alt="Kai the Eco Hero"
                 className="w-12 h-12 rounded-xl border-2 border-slate-900 object-cover shrink-0 shadow-retro-sm"
               />
               <div className="text-xs space-y-0.5">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span className="font-fun font-black text-slate-950 text-sm">Meet Kai, Town Eco Ranger</span>
-                  <span className="px-2 py-0.5 rounded-md bg-emerald-100 border border-slate-900 font-bold text-[10px] text-emerald-900 uppercase">
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-100 border border-slate-900 font-bold text-xs text-emerald-900 uppercase whitespace-nowrap">
                     Your In-Game Hero
                   </span>
                 </div>
@@ -282,7 +301,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             </div>
 
             {/* Trust indicators */}
-            <div className="flex items-center gap-4 pt-1 text-xs font-bold text-slate-600 uppercase tracking-wide reveal reveal-delay-5">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-xs font-bold text-slate-600 uppercase tracking-wide reveal reveal-delay-5">
               <span className="flex items-center gap-1">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 inline" />
                 Zero install
@@ -310,13 +329,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
               <div className="bg-slate-900 px-5 py-3.5 border-b-2 border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <img
-                    src="/images/hero-avatar.png"
+                    src="/images/hero-avatar.webp"
                     alt="Kai the Eco Hero"
                     className="w-7 h-7 rounded-full border-2 border-amber-300 object-cover shrink-0"
                   />
                   <div>
                     <div className="font-fun font-black text-xs text-amber-300 uppercase tracking-wider">🎒 Kai — Eco Ranger</div>
-                    <span className="text-[10px] text-slate-400 font-medium block">Sort waste. Power the town.</span>
+                    <span className="text-xs text-slate-400 font-medium block">Sort waste. Power the town.</span>
                   </div>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold uppercase tracking-wider">
@@ -330,14 +349,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                   {/* Ambient glow */}
                   <div className="absolute inset-0 bg-emerald-500/15 rounded-full blur-3xl scale-150 pointer-events-none" />
                   <img
-                    src="/images/kai-eco-transparent.png"
+                    src="/images/kai-eco-transparent.webp"
                     alt="Kai the Eco Hero standing ready with his sorting backpack"
                     className="relative w-44 h-44 sm:w-52 sm:h-52 object-contain drop-shadow-2xl animate-float"
                     onError={(e) => {
                       /* Fall back to hero-standing if transparent variant missing */
                       const img = e.target as HTMLImageElement;
                       if (!img.src.includes('hero-standing')) {
-                        img.src = '/images/hero-standing.png';
+                        img.src = '/images/hero-standing.webp';
                       }
                     }}
                   />
@@ -349,10 +368,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
 
                 {/* Five-level journey map */}
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-2.5 text-center">
+                  <p className="text-xs text-slate-400 uppercase font-bold tracking-wider mb-2.5 text-center">
                     Five locations to master
                   </p>
-                  <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center justify-between gap-0.5">
                     {[
                       { emoji: '🍳', name: 'Kitchen'  },
                       { emoji: '🏫', name: 'School'   },
@@ -365,7 +384,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                           <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg">
                             {emoji}
                           </div>
-                          <span className="text-[8px] text-slate-500 font-bold uppercase leading-none">{name}</span>
+                          <span className="text-[10px] text-slate-500 font-bold uppercase leading-none">{name}</span>
                         </div>
                         {i < arr.length - 1 && (
                           <div className="flex-1 h-px bg-slate-700 mt-3" />
@@ -381,8 +400,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                     🌱
                   </div>
                   <div>
-                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider block">Eco the mascot</span>
-                    <p className="text-white text-[11px] font-medium leading-snug mt-0.5">
+                    <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider block">Eco the mascot</span>
+                    <p className="text-white text-xs font-medium leading-snug mt-0.5">
                       “Food waste makes clean biogas. Use the green bin!”
                     </p>
                   </div>
@@ -397,7 +416,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                   <ArrowRight className="w-4 h-4 stroke-[3]" />
                 </button>
 
-                <div className="flex items-center justify-center gap-3 text-[10px] text-slate-500 font-medium pt-1">
+                <div className="flex items-center justify-center gap-3 text-xs text-slate-500 font-medium pt-1">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                     No install
@@ -417,7 +436,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             </div>
 
             {/* Below-card label */}
-            <div className="mt-3 flex items-center justify-between px-3 text-[11px] text-slate-500 font-medium">
+            <div className="mt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 px-3 text-xs text-slate-500 font-medium">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
                 Four bin types. Five game levels.
@@ -504,7 +523,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           PROBLEM — bento grid
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="problem" className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section id="problem" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
         <div className="space-y-6">
           <div className="space-y-2 reveal">
             <span className="inline-block px-3 py-1 rounded-lg bg-rose-100 text-rose-800 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -591,7 +610,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           HOW IT WORKS — 3 step cards
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
         <div className="space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2 reveal">
             <span className="inline-block px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -614,7 +633,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             ].map(({ num, color, label, badge, badgeColor, body }, i) => (
               <div
                 key={num}
-                className={`tactile-card bg-white rounded-3xl p-8 border-[3px] border-slate-950 shadow-retro-lg space-y-4 text-center reveal reveal-delay-${i + 1 as 1 | 2 | 3}`}
+                className={`tactile-card bg-white rounded-3xl p-6 sm:p-8 border-[3px] border-slate-950 shadow-retro-lg space-y-4 text-center reveal reveal-delay-${i + 1 as 1 | 2 | 3}`}
               >
                 <div className={`w-16 h-16 rounded-2xl ${color} text-slate-950 border-[3px] border-slate-950 mx-auto flex items-center justify-center font-fun font-black text-3xl shadow-retro-sm`}>
                   {num}
@@ -635,7 +654,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           BINS — colour-coded sorting reference
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="bins" className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section id="bins" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
         <div className="space-y-8">
           <div className="space-y-2 reveal">
             <span className="inline-block px-3 py-1 rounded-lg bg-blue-100 text-blue-800 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -688,7 +707,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
               </div>
               <button
                 onClick={onStartGame}
-                className="tactile-btn w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-fun font-black text-xs uppercase rounded-xl border-2 border-slate-950 shadow-retro-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                className="tactile-btn w-full py-3 min-h-[44px] bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-fun font-black text-xs uppercase rounded-xl border-2 border-slate-950 shadow-retro-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
               >
                 Test in the 3D game →
               </button>
@@ -700,8 +719,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           ENERGY — waste can make power + interactive slider
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="energy" className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="bg-slate-950 text-white rounded-3xl p-8 sm:p-12 border-[3px] border-slate-950 shadow-retro-xl space-y-8 reveal">
+      <section id="energy" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
+        <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-12 border-[3px] border-slate-950 shadow-retro-xl space-y-8 reveal">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-400 text-slate-950 font-fun font-black text-xs uppercase tracking-wider">
@@ -759,10 +778,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                     aria-valuemax={100}
                   />
                 </div>
-                <div className="flex justify-between text-[11px] font-bold text-slate-400 uppercase">
-                  <span>0% Dim town</span>
-                  <span>50% Streetlamps on</span>
-                  <span>100% Town glowing!</span>
+                <div className="flex justify-between gap-2 text-[10px] tracking-tight font-bold text-slate-400 uppercase">
+                  <span>0% Dim</span>
+                  <span className="hidden sm:inline">50% Streetlamps on</span>
+                  <span>100% Glowing</span>
                 </div>
               </div>
 
@@ -785,7 +804,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {[
                   { val: 25,  label: 'Low power (25%)' },
                   { val: 65,  label: 'Medium (65%)'    },
@@ -794,7 +813,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                   <button
                     key={val}
                     onClick={() => setEnergyLevel(val)}
-                    className={`tactile-btn py-2 px-3 rounded-xl font-fun font-bold text-xs uppercase border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400 ${
+                    className={`tactile-btn py-3 px-3 min-h-[44px] rounded-xl font-fun font-bold text-xs uppercase border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400 ${
                       energyLevel === val
                         ? 'bg-amber-300 text-slate-950 border-white'
                         : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
@@ -850,7 +869,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           LEVELS — five places, one mission
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="levels" className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section id="levels" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
         <div className="space-y-8">
           <div className="space-y-2 reveal">
             <span className="inline-block px-3 py-1 rounded-lg bg-amber-100 text-amber-900 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -909,7 +928,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           MEET KAI — hero showcase + mascot + daily adventures
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="hero-guide" className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section id="hero-guide" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
         <div className="space-y-8">
           <div className="space-y-2 reveal">
             <span className="inline-block px-3 py-1 rounded-lg bg-emerald-100 text-emerald-900 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -926,7 +945,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
               </div>
               <button
                 onClick={() => setIsArtworkModalOpen(true)}
-                className="tactile-btn self-start md:self-auto px-4 py-2.5 bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-black text-xs uppercase tracking-wider rounded-xl border-2 border-slate-950 shadow-retro-sm flex items-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="tactile-btn self-start md:self-auto px-4 py-3 min-h-[44px] bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-black text-xs uppercase tracking-wider rounded-xl border-2 border-slate-950 shadow-retro-sm flex items-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 <ZoomIn className="w-4 h-4" />
                 <span>View full art sheet</span>
@@ -947,7 +966,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                       Character Viewer
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-300">
+                  <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-300">
                     {[
                       { id: 'scene'    as const, label: 'Park Scene'  },
                       { id: 'standing' as const, label: 'Full Body'   },
@@ -956,7 +975,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                       <button
                         key={id}
                         onClick={() => setHeroViewMode(id)}
-                        className={`px-3 py-1 rounded-lg text-xs font-fun font-bold uppercase transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                        className={`px-3 py-2 min-h-[44px] rounded-lg text-xs font-fun font-bold uppercase transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                           heroViewMode === id
                             ? 'bg-slate-950 text-amber-300 shadow-sm'
                             : 'text-slate-600 hover:text-slate-950'
@@ -971,15 +990,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                 <div className="relative rounded-2xl overflow-hidden border-2 border-slate-950 bg-slate-950 group">
                   <img
                     src={
-                      heroViewMode === 'scene'    ? '/images/hero-park-scene.png'  :
-                      heroViewMode === 'standing' ? '/images/hero-standing.png'    :
-                                                    '/images/hero-model-sheet.png'
+                      heroViewMode === 'scene'    ? '/images/hero-park-scene.webp'  :
+                      heroViewMode === 'standing' ? '/images/hero-standing.webp'    :
+                                                    '/images/hero-model-sheet.webp'
                     }
                     alt={
                       heroViewMode === 'scene'    ? 'Kai the Eco Hero in the park sorting scene' :
                       heroViewMode === 'standing' ? 'Kai the Eco Hero full body in ranger gear'   :
                                                     'Kai character turnaround model sheet'
                     }
+                    decoding="async"
+                    fetchPriority={heroViewMode === 'scene' ? 'high' : 'auto'}
                     className="w-full h-72 sm:h-96 object-contain bg-slate-900 transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.02]"
                   />
                   <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-sm border border-slate-700 px-3 py-1 rounded-lg text-[11px] font-fun font-bold text-amber-300 uppercase">
@@ -989,7 +1010,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                   </div>
                   <button
                     onClick={() => setIsArtworkModalOpen(true)}
-                    className="absolute bottom-3 right-3 bg-white/95 hover:bg-white text-slate-950 p-2 rounded-xl border border-slate-900 shadow-md text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    className="absolute bottom-3 right-3 bg-white/95 hover:bg-white text-slate-950 p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-slate-900 shadow-md text-xs font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                     aria-label="Zoom in on artwork"
                   >
                     <ZoomIn className="w-4 h-4" />
@@ -1026,7 +1047,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                     </div>
                     <div>
                       <h3 className="font-fun font-black text-base text-slate-950">{title}</h3>
-                      <span className="text-[10px] font-bold uppercase text-slate-600">{subtitle}</span>
+                      <span className="text-xs font-bold uppercase text-slate-600">{subtitle}</span>
                     </div>
                   </div>
                   <p className="text-xs text-slate-700 leading-relaxed font-medium">{body}</p>
@@ -1081,7 +1102,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                   </div>
                   <div className="space-y-1">
                     <h4 className="font-fun font-black text-sm text-slate-950 leading-tight">{adv.title}</h4>
-                    <p className="text-[11px] text-slate-600 leading-snug font-medium">{adv.desc}</p>
+                    <p className="text-xs text-slate-600 leading-snug font-medium">{adv.desc}</p>
                   </div>
                 </div>
               ))}
@@ -1089,17 +1110,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
 
             <div className="p-4 rounded-2xl bg-slate-950 text-white flex flex-col sm:flex-row items-center justify-between gap-4 border-2 border-slate-950">
               <div className="flex items-center gap-3">
-                <img src="/images/hero-avatar.png" alt="Kai" className="w-10 h-10 rounded-xl border border-amber-300 object-cover shrink-0" />
+                <img src="/images/hero-avatar.webp" alt="Kai" loading="lazy" decoding="async" className="w-10 h-10 rounded-xl border border-amber-300 object-cover shrink-0" />
                 <div>
                   <span className="text-xs font-fun font-bold text-amber-300 block">Concept artwork</span>
-                  <span className="text-[11px] text-slate-300 block">
-                    File: <code className="font-mono text-emerald-300">af0b0529-c7ee-4e02-b5bc-328bab978188.png</code>
+                  <span className="hidden sm:block text-[11px] text-slate-300">
+                    File: <code className="font-mono text-emerald-300">hero-zoom.webp</code>
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsArtworkModalOpen(true)}
-                className="tactile-btn w-full sm:w-auto px-4 py-2 bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-black text-xs uppercase rounded-xl border-2 border-slate-950 shadow-retro-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="tactile-btn w-full sm:w-auto px-4 py-3 min-h-[44px] bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-black text-xs uppercase rounded-xl border-2 border-slate-950 shadow-retro-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 Inspect high-res artwork →
               </button>
@@ -1111,8 +1132,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           TEACHERS — dashboard preview
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="teachers" className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="bg-white rounded-3xl p-8 sm:p-12 border-[3px] border-slate-950 shadow-retro-xl space-y-8 reveal">
+      <section id="teachers" className="max-w-7xl mx-auto px-4 sm:px-6 scroll-mt-24">
+        <div className="bg-white rounded-3xl p-6 sm:p-12 border-[3px] border-slate-950 shadow-retro-xl space-y-8 reveal">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-slate-200 pb-6">
             <div className="space-y-1">
               <span className="inline-block px-3 py-1 rounded-lg bg-blue-100 text-blue-900 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -1165,14 +1186,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-3xl p-8 border-[3px] border-slate-950 shadow-retro-lg space-y-2 reveal reveal-delay-1">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border-[3px] border-slate-950 shadow-retro-lg space-y-2 reveal reveal-delay-1">
               <span className="text-xs font-bold uppercase text-slate-400">Before the game</span>
               <span className="font-fun font-black text-6xl text-slate-400 block" aria-label="42 percent">42%</span>
               <p className="text-xs text-slate-500 font-medium">
                 Children confused hazardous batteries with normal metal waste.
               </p>
             </div>
-            <div className="bg-emerald-100 rounded-3xl p-8 border-[3px] border-slate-950 shadow-retro-lg space-y-2 reveal reveal-delay-2">
+            <div className="bg-emerald-100 rounded-3xl p-6 sm:p-8 border-[3px] border-slate-950 shadow-retro-lg space-y-2 reveal reveal-delay-2">
               <span className="text-xs font-bold uppercase text-emerald-800">After the game</span>
               <span className="font-fun font-black text-6xl text-emerald-700 block" aria-label="92 percent">92%</span>
               <p className="text-xs text-emerald-900 font-bold">
@@ -1186,7 +1207,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
       {/* ════════════════════════════════════════════════════════════════════
           FAQ — accordion
           ════════════════════════════════════════════════════════════════════ */}
-      <section id="faq" className="max-w-4xl mx-auto px-4 sm:px-6">
+      <section id="faq" className="max-w-4xl mx-auto px-4 sm:px-6 scroll-mt-24">
         <div className="space-y-6">
           <div className="text-center space-y-2 reveal">
             <span className="inline-block px-3 py-1 rounded-lg bg-amber-100 text-amber-900 border-2 border-slate-900 font-fun font-bold text-xs uppercase tracking-wider shadow-retro-sm">
@@ -1237,11 +1258,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
           FINAL CTA + FOOTER
           ════════════════════════════════════════════════════════════════════ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="bg-amber-300 rounded-3xl p-8 sm:p-14 border-[3px] sm:border-4 border-slate-950 shadow-retro-xl text-center space-y-6 reveal">
+        <div className="bg-amber-300 rounded-3xl p-6 sm:p-14 border-[3px] sm:border-4 border-slate-950 shadow-retro-xl text-center space-y-6 reveal">
           <div className="flex items-center justify-center gap-3">
             <img
-              src="/images/hero-avatar.png"
+              src="/images/hero-avatar.webp"
               alt="Kai the Eco Hero"
+              loading="lazy"
+              decoding="async"
               className="w-16 h-16 rounded-2xl border-2 border-slate-950 object-cover shadow-retro-sm"
             />
             <div className="w-16 h-16 rounded-2xl bg-slate-950 text-white border-2 border-slate-950 flex items-center justify-center text-3xl shadow-retro-sm">
@@ -1291,11 +1314,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
               <span>Child privacy safe: no personal data or location tracking.</span>
             </div>
             <div className="flex gap-4">
-              <a href="#faq" className="hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:underline">
+              <a href="#faq" className="inline-block py-2 -my-2 hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:underline">
                 Privacy FAQ
               </a>
               <span aria-hidden="true">·</span>
-              <a href="#faq" className="hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:underline">
+              <a href="#faq" className="inline-block py-2 -my-2 hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:underline">
                 Terms of use
               </a>
             </div>
@@ -1316,19 +1339,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
         >
           <div className="bg-[#FDFBF7] border-[3px] border-slate-950 rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-retro-xl overflow-hidden">
             {/* Modal header */}
-            <div className="bg-slate-900 px-6 py-4 border-b-2 border-slate-950 flex items-center justify-between text-white shrink-0">
-              <div className="flex items-center gap-3">
-                <img src="/images/hero-avatar.png" alt="Kai" className="w-9 h-9 rounded-xl border border-amber-300 object-cover" />
-                <div>
-                  <h3 className="font-fun font-black text-lg text-white leading-none">Kai: Eco Hero Concept Sheet</h3>
-                  <span className="text-[11px] text-amber-300 font-bold uppercase tracking-wider">
+            <div className="bg-slate-900 px-4 py-3 sm:px-6 sm:py-4 border-b-2 border-slate-950 flex items-center justify-between text-white shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <img src="/images/hero-avatar.webp" alt="Kai" loading="lazy" decoding="async" className="w-9 h-9 rounded-xl border border-amber-300 object-cover shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="font-fun font-black text-base sm:text-lg text-white leading-none truncate">Kai: Eco Hero Concept Sheet</h3>
+                  <span className="hidden sm:block text-[11px] text-amber-300 font-bold uppercase tracking-wider">
                     Full Resolution Concept Artwork · 1374 × 1145 px
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setIsArtworkModalOpen(false)}
-                className="p-2 bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-700 rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+                className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border-2 border-slate-700 rounded-xl transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 shrink-0"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
@@ -1339,8 +1362,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             <div className="p-4 sm:p-6 overflow-auto flex-1 flex flex-col items-center justify-center bg-slate-950/5">
               <div className="relative border-2 border-slate-950 rounded-2xl overflow-hidden shadow-retro-lg bg-white max-h-[65vh]">
                 <img
-                  src="/af0b0529-c7ee-4e02-b5bc-328bab978188.png"
+                  src="/hero-zoom.webp"
                   alt="Kai the Eco Hero: complete concept sheet with park scene, expressions, 360 turnaround, and daily adventures"
+                  width={1374}
+                  height={1145}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-auto object-contain max-h-[65vh]"
                 />
               </div>
@@ -1348,8 +1375,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
                 <p className="font-fun font-bold text-slate-900 text-sm">
                   Complete Hero Sheet: Park Scene, Expressions, 360 Turnaround, and Five Daily Adventures
                 </p>
-                <p className="text-slate-500">
-                  Asset: <code className="bg-slate-200 px-1.5 py-0.5 rounded text-[11px] font-mono">af0b0529-c7ee-4e02-b5bc-328bab978188.png</code>
+                <p className="hidden sm:block text-slate-500">
+                  Asset: <code className="bg-slate-200 px-1.5 py-0.5 rounded text-[11px] font-mono">hero-zoom.webp</code>
                 </p>
               </div>
             </div>
@@ -1357,7 +1384,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
             {/* Modal footer */}
             <div className="bg-white px-6 py-3 border-t-2 border-slate-950 flex items-center justify-between shrink-0">
               <a
-                href="/af0b0529-c7ee-4e02-b5bc-328bab978188.png"
+                href="/hero-zoom.webp"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-fun font-bold text-emerald-700 hover:underline flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded"
@@ -1367,7 +1394,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartGame, onOpenRep
               </a>
               <button
                 onClick={() => setIsArtworkModalOpen(false)}
-                className="tactile-btn px-5 py-2 bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-bold text-xs uppercase rounded-xl border-2 border-slate-950 shadow-retro-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="tactile-btn px-5 py-3 min-h-[44px] bg-amber-300 hover:bg-amber-400 text-slate-950 font-fun font-bold text-xs uppercase rounded-xl border-2 border-slate-950 shadow-retro-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 Close preview
               </button>

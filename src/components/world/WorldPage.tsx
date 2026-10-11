@@ -37,7 +37,6 @@ import {
   Zap,
   Flame,
   Award,
-  ChevronDown,
   ChevronUp,
 } from 'lucide-react';
 
@@ -141,6 +140,55 @@ export const WorldPage: React.FC<WorldPageProps> = ({
   const timerDuration = currentLevel.timeLimit ?? 90;
   const timer = useCountdownTimer(timerDuration);
 
+  // ── Portrait gate: pause the timer & freeze input ─────────────────────────
+  // The "turn sideways" overlay is visual only; without this, rotating
+  // mid-mission keeps burning timer seconds and keyboard input still moves Kai.
+  const timerRef = useRef(timer);
+  useEffect(() => {
+    timerRef.current = timer;
+  }, [timer]);
+  const pausedByPortraitRef = useRef(false);
+  // Set once the society mission ends so a portrait→landscape resume can never
+  // restart a finished timer and re-run finishSocietyLevel.
+  const missionOverRef = useRef(false);
+  useEffect(() => {
+    const blocked = isCoarsePointer && isPortrait;
+    if (blocked) {
+      if (timerRef.current.isRunning) {
+        timerRef.current.pause();
+        pausedByPortraitRef.current = true;
+      }
+    } else if (pausedByPortraitRef.current) {
+      pausedByPortraitRef.current = false;
+      if (!timerRef.current.isExpired && !missionOverRef.current) {
+        timerRef.current.start();
+      }
+    }
+  }, [isCoarsePointer, isPortrait]);
+
+  useEffect(() => {
+    if (!(isCoarsePointer && isPortrait)) return;
+    // Capture-phase stop: blocks game key/pointer handlers (window + React root)
+    // while the gate is up. Browser defaults (refresh, back) still work.
+    const freeze = (e: Event) => {
+      e.stopImmediatePropagation();
+    };
+    window.addEventListener('keydown', freeze, true);
+    window.addEventListener('keyup', freeze, true);
+    window.addEventListener('pointerdown', freeze, true);
+    window.addEventListener('pointermove', freeze, true);
+    window.addEventListener('pointerup', freeze, true);
+    window.addEventListener('wheel', freeze, true);
+    return () => {
+      window.removeEventListener('keydown', freeze, true);
+      window.removeEventListener('keyup', freeze, true);
+      window.removeEventListener('pointerdown', freeze, true);
+      window.removeEventListener('pointermove', freeze, true);
+      window.removeEventListener('pointerup', freeze, true);
+      window.removeEventListener('wheel', freeze, true);
+    };
+  }, [isCoarsePointer, isPortrait]);
+
   // ── Eco Lens (Society mode) ─────────────────────────────────────────────────
   const [lensState, setLensState] = useState(INITIAL_ECO_LENS_STATE);
   const [lensUseCount, setLensUseCount] = useState<number>(0);
@@ -201,6 +249,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
     setLensState(INITIAL_ECO_LENS_STATE);
     setLensUseCount(0);
     setTruckArriving(false);
+    missionOverRef.current = false;
     if (truckModalTimerRef.current) {
       clearTimeout(truckModalTimerRef.current);
       truckModalTimerRef.current = null;
@@ -409,6 +458,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
 
   // ── Finish Society Level ────────────────────────────────────────────────────
   const finishSocietyLevel = useCallback(() => {
+    missionOverRef.current = true;
     const accuracy = societySortedCount > 0
       ? Math.round((societyFirstTryCount / societySortedCount) * 100)
       : 0;
@@ -498,49 +548,55 @@ export const WorldPage: React.FC<WorldPageProps> = ({
   };
 
   // ── Accessibility toggles ───────────────────────────────────────────────────
-  const handleToggleSound = () => {
+  const handleToggleSound = useCallback(() => {
     const next = !soundEnabled;
     setSoundEnabled(next);
     audio.setSoundEnabled(next);
     audio.setVoiceEnabled(next);
-  };
+  }, [soundEnabled]);
 
-  const handleToggleSlowMode = () => {
+  const handleToggleSlowMode = useCallback(() => {
     const next = !slowMode;
     setSlowMode(next);
     audio.setSlowMode(next);
-  };
+  }, [slowMode]);
 
-  const handleToggleFullscreen = () => {
+  const handleToggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
     } else {
       document.exitFullscreen().catch(() => {});
     }
-  };
+  }, []);
 
   const currentAccuracy =
     totalThrows > 0 ? Math.round((correctThrows / totalThrows) * 100) : 100;
 
   // ── HUD: LEFT ───────────────────────────────────────────────────────────────
-  const topBarExtrasLeft = (
-    <div className="flex items-center gap-2">
-      {onExit && (
-          <button
-            onClick={onExit}
-            title="Exit to menu"
-            className="tactile-btn flex items-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] bg-white hover:bg-slate-100 text-slate-950 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
-          >
-          <ArrowLeft className="w-4 h-4 text-slate-950" />
-          <span className="hidden sm:inline">Exit</span>
-        </button>
-      )}
-    </div>
+  // Memoized so the 1 Hz countdown tick doesn't recreate HUD prop objects and
+  // re-render the whole WorldCanvas subtree (props change identity every render).
+  const topBarExtrasLeft = useMemo(
+    () => (
+      <div className="flex items-center gap-2">
+        {onExit && (
+            <button
+              onClick={onExit}
+              title="Exit to menu"
+              className="tactile-btn flex items-center gap-1.5 px-3 py-2 min-h-[40px] md:min-h-[44px] min-w-[40px] md:min-w-[44px] bg-white hover:bg-slate-100 text-slate-950 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            >
+            <ArrowLeft className="w-4 h-4 text-slate-950" />
+            <span className="hidden sm:inline">Exit</span>
+          </button>
+        )}
+      </div>
+    ),
+    [onExit]
   );
 
   // ── HUD: CENTER ─────────────────────────────────────────────────────────────
-  const topBarCenter = (
-    <div className="flex items-center gap-2 bg-[#FDFBF7]/95 border-2 border-slate-900 rounded-2xl px-2 sm:px-3 py-1.5 shadow-retro text-slate-900 backdrop-blur-sm flex-wrap min-w-0">
+  const topBarCenter = useMemo(
+    () => (
+    <div className="flex items-center gap-1.5 bg-[#FDFBF7]/95 border-2 border-slate-900 rounded-2xl px-2 sm:px-3 py-1 sm:py-1.5 shadow-retro text-slate-900 backdrop-blur-sm flex-wrap min-w-0">
 
       {/* Level name */}
       <span className="hidden lg:inline-block text-[11px] font-fun font-black text-slate-700 uppercase">
@@ -581,9 +637,9 @@ export const WorldPage: React.FC<WorldPageProps> = ({
 
           <div className="h-4 w-[2px] bg-slate-300" />
 
-          <div className="flex items-center gap-2">
-            <Zap className="w-3.5 h-3.5 text-emerald-600 fill-emerald-500" />
-            <div className="w-24 bg-slate-200 h-2.5 rounded-full overflow-hidden border border-slate-900">
+          <div className="flex items-center gap-1.5">
+            <Zap className="w-3.5 h-3.5 text-emerald-600 fill-emerald-500 shrink-0" />
+            <div className="w-16 sm:w-24 bg-slate-200 h-2.5 rounded-full overflow-hidden border border-slate-900">
               <div
                 className="h-full bg-gradient-to-r from-emerald-400 to-amber-300 transition-all duration-300"
                 style={{ width: `${Math.min(100, Math.max(6, energy))}%` }}
@@ -596,7 +652,8 @@ export const WorldPage: React.FC<WorldPageProps> = ({
 
           <div className="flex items-center gap-1 bg-amber-300 px-2 py-0.5 rounded-lg border border-slate-900 font-fun font-black text-xs text-slate-950">
             <Award className="w-3.5 h-3.5" />
-            <span>{score} PTS</span>
+            <span>{score}</span>
+            <span className="hidden sm:inline">&nbsp;PTS</span>
           </div>
 
           {streak >= 2 && (
@@ -608,10 +665,26 @@ export const WorldPage: React.FC<WorldPageProps> = ({
         </>
       )}
     </div>
+    ),
+    [
+      isSocietyMode,
+      currentLevel.name,
+      currentLevel.targetCount,
+      timer.timeLeft,
+      timer.isWarning,
+      timer.isUrgent,
+      timer.isExpired,
+      societySortedCount,
+      score,
+      itemsSorted,
+      energy,
+      streak,
+    ]
   );
 
   // ── HUD: RIGHT ──────────────────────────────────────────────────────────────
-  const topBarExtrasRight = (
+  const topBarExtrasRight = useMemo(
+    () => (
     <div className="flex items-center gap-1.5">
       {/* Eco Lens button (society mode only) */}
       {isSocietyMode && (
@@ -626,7 +699,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={() => setShowLevelSelect(true)}
         title="View missions"
-        className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        className="flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] md:min-h-[44px] bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
       >
         <Map className="w-3.5 h-3.5 text-emerald-600" />
         <span className="hidden sm:inline">Missions</span>
@@ -636,7 +709,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={() => setShowEcopedia(true)}
         title="View Eco-pedia cards"
-        className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        className="flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] md:min-h-[44px] bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
       >
         <BookOpen className="w-3.5 h-3.5 text-teal-600" />
         <span className="hidden md:inline">Cards ({profile.unlockedCards.length})</span>
@@ -646,7 +719,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={handleToggleSound}
         title={soundEnabled ? 'Mute sound' : 'Enable sound'}
-        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        className="p-2 min-h-[40px] min-w-[40px] md:min-h-[44px] md:min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
       >
         {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600" /> : <VolumeX className="w-4 h-4 text-rose-600" />}
       </button>
@@ -655,7 +728,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={handleToggleSlowMode}
         title={slowMode ? 'Normal speed' : 'Slow mode'}
-        className={`min-h-[44px] min-w-[44px] flex items-center justify-center px-2.5 py-1.5 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px] ${
+        className={`min-h-[40px] min-w-[40px] md:min-h-[44px] md:min-w-[44px] flex items-center justify-center px-2.5 py-1.5 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px] ${
           slowMode ? 'bg-amber-300 text-slate-950' : 'bg-white text-slate-700 hover:bg-slate-100'
         }`}
       >
@@ -667,7 +740,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
         <button
           onClick={handleToggleFullscreen}
           title={isFullscreen ? 'Exit fullscreen' : 'Full desktop view'}
-          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
+          className="hidden sm:flex p-2 min-h-[40px] min-w-[40px] md:min-h-[44px] md:min-w-[44px] items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
         >
           {isFullscreen ? <Minimize2 className="w-4 h-4 text-slate-700" /> : <Maximize2 className="w-4 h-4 text-slate-700" />}
         </button>
@@ -677,25 +750,35 @@ export const WorldPage: React.FC<WorldPageProps> = ({
         <button
           onClick={onOpenTeacherReport}
           title="Teacher report"
-          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
+          className="hidden sm:flex p-2 min-h-[40px] min-w-[40px] md:min-h-[44px] md:min-w-[44px] items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
         >
           <BarChart2 className="w-4 h-4 text-blue-600" />
         </button>
       )}
     </div>
+    ),
+    [
+      isSocietyMode,
+      lensState,
+      handleActivateEcoLens,
+      currentItem,
+      isThrowing,
+      profile.unlockedCards.length,
+      soundEnabled,
+      handleToggleSound,
+      slowMode,
+      handleToggleSlowMode,
+      isFullscreen,
+      handleToggleFullscreen,
+      onOpenTeacherReport,
+      setShowLevelSelect,
+      setShowEcopedia,
+    ]
   );
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 w-screen h-dvh overflow-hidden bg-slate-950 z-40 select-none safe-area-shell">
-      {/* Touch devices must play in landscape */}
-      {isCoarsePointer && isPortrait && (
-        <div className="absolute inset-0 z-50 bg-[#FDFBF7] flex flex-col items-center justify-center gap-4 px-8 text-center">
-          <span className="text-6xl animate-bounce">📱</span>
-          <div className="text-2xl font-fun font-black text-slate-950">Turn your device sideways</div>
-          <div className="text-sm font-fun text-slate-700">The game plays in landscape.</div>
-        </div>
-      )}
       <WorldCanvas
         fullScreen={true}
         currentLevelId={currentLevelId}
@@ -736,16 +819,11 @@ export const WorldPage: React.FC<WorldPageProps> = ({
               <ChevronUp className="w-4 h-4 text-slate-700" />
             </button>
           ) : (
-            <div className="relative">
-              <button
-                onClick={() => setIsMascotCollapsed(true)}
-                title="Minimize mascot tips"
-                className="absolute top-3 right-3 p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200 z-10 transition-colors"
-              >
-                <ChevronDown className="w-4 h-4" />
-              </button>
-              <MascotDialogue message={mascotMessage} isPositive={isPositiveFeedback} />
-            </div>
+            <MascotDialogue
+              message={mascotMessage}
+              isPositive={isPositiveFeedback}
+              onCollapse={() => setIsMascotCollapsed(true)}
+            />
           )}
         </div>
 
@@ -801,6 +879,16 @@ export const WorldPage: React.FC<WorldPageProps> = ({
           />
         )}
       </WorldCanvas>
+
+      {/* Touch devices must play in landscape. Rendered last with a high z
+          index so it paints above any open modal (they share z-50). */}
+      {isCoarsePointer && isPortrait && (
+        <div className="absolute inset-0 z-[100] bg-[#FDFBF7] flex flex-col items-center justify-center gap-4 px-8 text-center">
+          <span className="text-6xl animate-bounce">📱</span>
+          <div className="text-2xl font-fun font-black text-slate-950">Turn your device sideways</div>
+          <div className="text-sm font-fun text-slate-700">The game plays in landscape.</div>
+        </div>
+      )}
     </div>
   );
 };

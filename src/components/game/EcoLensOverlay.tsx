@@ -109,7 +109,7 @@ export const EcoLensButton: React.FC<EcoLensButtonProps> = ({ lensState, onActiv
           ? 'No Eco Lens energy left'
           : `Use Eco Lens (${usesLeft} left) — press L`
       }
-      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-slate-900 shadow-retro-sm font-fun font-black text-xs transition-all
+      className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] md:min-h-[44px] rounded-xl border-2 border-slate-900 shadow-retro-sm font-fun font-black text-xs transition-all
         ${canUse
           ? 'bg-teal-500 hover:bg-teal-400 text-white active:translate-x-[1px] active:translate-y-[1px]'
           : 'bg-slate-300 text-slate-500 cursor-not-allowed opacity-70'

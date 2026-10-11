@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Volume2, Send, Sparkles } from 'lucide-react';
+import { Volume2, Send, Sparkles, X } from 'lucide-react';
 import { audio } from '../../services/audio';
 import { apiService } from '../../services/api';
 
 interface MascotDialogueProps {
   message: string;
   isPositive?: boolean;
+  onCollapse?: () => void;
 }
 
-export const MascotDialogue: React.FC<MascotDialogueProps> = ({ message, isPositive = true }) => {
+export const MascotDialogue: React.FC<MascotDialogueProps> = ({ message, isPositive = true, onCollapse }) => {
   const [showAskEco, setShowAskEco] = useState(false);
   const [askQuestion, setAskQuestion] = useState('');
   const [ecoAiReply, setEcoAiReply] = useState<string | null>(null);
@@ -52,7 +53,17 @@ export const MascotDialogue: React.FC<MascotDialogueProps> = ({ message, isPosit
           }`}>
             {isPositive ? 'Eco says' : 'Eco teaches'}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            {onCollapse && (
+              <button
+                onClick={onCollapse}
+                title="Minimize Eco tips"
+                aria-label="Minimize Eco tips"
+                className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-700 border-2 border-slate-900 rounded-xl shadow-retro-sm transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
             <button
               onClick={() => handleSpeak(ecoAiReply || message)}
               title="Hear voice"
@@ -71,10 +82,13 @@ export const MascotDialogue: React.FC<MascotDialogueProps> = ({ message, isPosit
           </div>
         </div>
 
-        {/* Regular Message */}
-        <p className="text-sm md:text-base text-slate-900 font-bold leading-snug">
-          {ecoAiReply || message}
-        </p>
+        {/* Scrollable body: message + Ask Eco drawer, capped so the panel
+            cannot take over a phone landscape screen */}
+        <div className="max-h-[32vh] overflow-y-auto pr-1 space-y-0">
+          {/* Regular Message */}
+          <p className="text-sm md:text-base text-slate-900 font-bold leading-snug">
+            {ecoAiReply || message}
+          </p>
 
         {/* Optional AI Ask Eco Drawer (Amazon Bedrock integration) */}
         {showAskEco && (
@@ -106,6 +120,7 @@ export const MascotDialogue: React.FC<MascotDialogueProps> = ({ message, isPosit
             )}
           </form>
         )}
+        </div>
       </div>
     </div>
   );

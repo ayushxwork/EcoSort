@@ -21,6 +21,12 @@ export const MapItemPreview: React.FC<MapItemPreviewProps> = ({
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [isRotating, setIsRotating] = useState(autoRotate);
+  // Mirrored into a ref so toggling rotation doesn't tear down + rebuild the
+  // whole WebGL scene (the effect below must not depend on isRotating).
+  const isRotatingRef = useRef(isRotating);
+  useEffect(() => {
+    isRotatingRef.current = isRotating;
+  }, [isRotating]);
   const meshGroupRef = useRef<THREE.Group | null>(null);
 
   useEffect(() => {
@@ -92,48 +98,40 @@ export const MapItemPreview: React.FC<MapItemPreviewProps> = ({
     scene.add(itemMesh);
     meshGroupRef.current = itemMesh;
 
-    // Interaction dragging
-    let isDragging = false;
-    let prevMouseX = 0;
-
-    const onMouseDown = (e: MouseEvent) => {
-      isDragging = true;
-      prevMouseX = e.clientX;
-    };
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isDragging || !meshGroupRef.current) return;
-      const deltaX = e.clientX - prevMouseX;
-      meshGroupRef.current.rotation.y += deltaX * 0.015;
-      prevMouseX = e.clientX;
-    };
-    const onMouseUp = () => {
-      isDragging = false;
-    };
-
+    // Interaction dragging — pointer events cover mouse + touch in one path.
+    // setPointerCapture keeps the drag alive when the pointer leaves the canvas;
+    // touch-action: none stops the drag from simultaneously scrolling the modal.
     const dom = renderer.domElement;
-    dom.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseup', onMouseUp);
+    let isDragging = false;
+    let activePointerId: number | null = null;
+    let prevX = 0;
 
-    // Touch support
-    const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) {
-        isDragging = true;
-        prevMouseX = e.touches[0].clientX;
-      }
+    const onPointerDown = (e: PointerEvent) => {
+      if (activePointerId !== null) return; // single-pointer drag only
+      activePointerId = e.pointerId;
+      isDragging = true;
+      prevX = e.clientX;
+      dom.setPointerCapture(e.pointerId);
     };
-    const onTouchMove = (e: TouchEvent) => {
-      if (!isDragging || !meshGroupRef.current || e.touches.length !== 1) return;
-      const deltaX = e.touches[0].clientX - prevMouseX;
-      meshGroupRef.current.rotation.y += deltaX * 0.02;
-      prevMouseX = e.touches[0].clientX;
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDragging || e.pointerId !== activePointerId || !meshGroupRef.current) return;
+      const deltaX = e.clientX - prevX;
+      // Touch keeps its original, slightly faster sensitivity.
+      const factor = e.pointerType === 'touch' ? 0.02 : 0.015;
+      meshGroupRef.current.rotation.y += deltaX * factor;
+      prevX = e.clientX;
     };
-    const onTouchEnd = () => {
+    const onPointerEnd = (e: PointerEvent) => {
+      if (e.pointerId !== activePointerId) return;
       isDragging = false;
+      activePointerId = null;
     };
-    dom.addEventListener('touchstart', onTouchStart);
-    window.addEventListener('touchmove', onTouchMove);
-    window.addEventListener('touchend', onTouchEnd);
+
+    dom.style.touchAction = 'none';
+    dom.addEventListener('pointerdown', onPointerDown);
+    dom.addEventListener('pointermove', onPointerMove);
+    dom.addEventListener('pointerup', onPointerEnd);
+    dom.addEventListener('pointercancel', onPointerEnd);
 
     // Animation Loop
     let animId: number;
@@ -143,7 +141,7 @@ export const MapItemPreview: React.FC<MapItemPreviewProps> = ({
       animId = requestAnimationFrame(animate);
       const delta = clock.getDelta();
 
-      if (meshGroupRef.current && isRotating && !isDragging) {
+      if (meshGroupRef.current && isRotatingRef.current && !isDragging) {
         meshGroupRef.current.rotation.y += delta * 1.2;
       }
 
@@ -163,16 +161,14 @@ export const MapItemPreview: React.FC<MapItemPreviewProps> = ({
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
-      dom.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-      dom.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('touchend', onTouchEnd);
+      dom.removeEventListener('pointerdown', onPointerDown);
+      dom.removeEventListener('pointermove', onPointerMove);
+      dom.removeEventListener('pointerup', onPointerEnd);
+      dom.removeEventListener('pointercancel', onPointerEnd);
       disposeItemMesh(scene);
       renderer.dispose();
     };
-  }, [modelType, height, isRotating]);
+  }, [modelType, height]);
 
   return (
     <div className={`relative bg-slate-900/80 rounded-2xl border border-slate-700/60 overflow-hidden ${className}`}>
