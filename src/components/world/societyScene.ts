@@ -605,7 +605,13 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
   const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.7 });
   const leafMat2 = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.7 });
 
-  const treePositions: [number, number][] = [[-9, -5], [-8, 1.5], [8.5, -1], [8, -6]];
+  // Four boundary trees: front-left, left-middle, back-right, right (beyond bench)
+  const treePositions: [number, number][] = [
+    [-10.5, 5],   // Tree 1: front-left corner, clear of the gate opening
+    [-10.5, -1],  // Tree 2: left-middle boundary, spaced from Tree 1
+    [9.5, -9],    // Tree 3: back-right corner, right of the building, away from bins
+    [10.5, 0.5],  // Tree 4: right boundary, beyond the bench near the right wall
+  ];
   treePositions.forEach(([tx, tz]) => {
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 1.6, 8), trunkMat);
     trunk.position.set(tx, 0.8, tz);
