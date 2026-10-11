@@ -1,5 +1,5 @@
 {
-  "0": ".smoke-test.cjs",
+  "0": "BinType",
   "1": "progress.js",
   "2": "package.json",
   "3": "Level 1: Waste Detective — Implementation Plan",
@@ -8,7 +8,8 @@
   "6": "GLTFBuilder",
   "7": "ECC Skills Integration",
   "8": "createItemMesh.ts",
-  "9": "WorldCanvas.tsx",
+  "9": "societyScene.ts",
+  "10": "WorldCanvas.tsx",
   "11": "compilerOptions",
   "12": "EcoSort Heroes Full Plan",
   "13": "Architecture Decision Records Skill",
@@ -33,9 +34,18 @@
   "32": "vite-env.d.ts",
   "33": "tailwind.config.js",
   "34": "PART B — Visual system",
-  "35": "WorldCanvas",
+  "35": "MapItemInstance",
   "36": "PART B — Visual system",
   "37": "App.tsx",
+  "38": "vitest",
+  "39": "homeKitchenScene.ts",
   "40": "createLitterScatter",
-  "41": "WorldPage.tsx"
+  "41": "WorldPage.tsx",
+  "42": "react",
+  "43": "game.ts",
+  "44": "bins.ts",
+  "45": "world/types.ts",
+  "46": "LandingPage.tsx",
+  "47": "MissionResultsModal.tsx",
+  "48": "items.ts"
 }
