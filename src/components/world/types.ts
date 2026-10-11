@@ -10,6 +10,12 @@ export interface WorldObstacle {
   type: 'building' | 'fence' | 'water' | 'prop';
 }
 
+/** A litter item with a fixed type at a fixed position (level-authored). */
+export interface PinnedLitterSpot {
+  position: THREE.Vector3;
+  itemId: string;
+}
+
 export interface LevelStation {
   id: number;
   name: string;

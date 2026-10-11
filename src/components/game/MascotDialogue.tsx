@@ -21,6 +21,8 @@ export const MascotDialogue: React.FC<MascotDialogueProps> = ({ message, isPosit
   const handleAskEcoSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!askQuestion.trim()) return;
+    // Hand keyboard focus back to the game so WASD works again
+    (document.activeElement as HTMLElement | null)?.blur();
     setIsLoadingAi(true);
     setEcoAiReply(null);
 

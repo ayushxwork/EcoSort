@@ -11,7 +11,7 @@ describe('Kai 3D GLB Character Verification', () => {
     expect(fs.existsSync(glbPath)).toBe(true);
 
     const stat = fs.statSync(glbPath);
-    expect(stat.size).toBeGreaterThan(100_000); // Should be > 100KB with textures
+    expect(stat.size).toBeGreaterThan(10_000); // Flat-color model, no embedded textures
 
     const fd = fs.openSync(glbPath, 'r');
     const headerBuf = Buffer.alloc(12);
@@ -28,7 +28,7 @@ describe('Kai 3D GLB Character Verification', () => {
     expect(length).toBe(stat.size);
   });
 
-  it('parses Kai GLB with Three.js and validates key locomotion pivots and photo textures', async () => {
+  it('parses Kai GLB with Three.js and validates key locomotion pivots and flat-color materials', async () => {
     // Provide polyfill for self / createImageBitmap in node/jsdom testing
     const originalSelf = globalThis.self;
     const originalCreateImageBitmap = (globalThis as any).createImageBitmap;
@@ -79,7 +79,7 @@ describe('Kai 3D GLB Character Verification', () => {
       expect(torso).toBeDefined();
       expect(backpack).toBeDefined();
 
-      // Check materials and photo texture mapping
+      // Check materials bound to meshes
       const materialsFound = new Set<string>();
       scene.traverse((child: THREE.Object3D) => {
         if ((child as THREE.Mesh).isMesh) {
@@ -93,13 +93,21 @@ describe('Kai 3D GLB Character Verification', () => {
         }
       });
 
-      // Verify textures from hero turnaround sheet are bound to materials
-      expect(materialsFound.has('MatKaiFace')).toBe(true);
-      expect(materialsFound.has('MatKaiHoodieFront')).toBe(true);
-      expect(materialsFound.has('MatKaiBackpack')).toBe(true);
-      expect(materialsFound.has('MatKaiHairTex')).toBe(true);
-      expect(materialsFound.has('MatKaiShortsTex')).toBe(true);
-      expect(materialsFound.has('MatKaiSneakerTex')).toBe(true);
+      // Verify flat-color materials are bound to meshes
+      expect(materialsFound.has('MatSkin')).toBe(true);
+      expect(materialsFound.has('MatHoodieYellow')).toBe(true);
+      expect(materialsFound.has('MatBrownHair')).toBe(true);
+      expect(materialsFound.has('MatBackpackGreen')).toBe(true);
+      expect(materialsFound.has('MatDenimBlue')).toBe(true);
+      expect(materialsFound.has('MatWhite')).toBe(true);
+
+      // No sticker overlays or decorative bits left on the model
+      const stickerNodePattern = /FaceFront|TorsoFront|BackpackBack|ShortsFront|SnkSide|Drawstring/;
+      const nodeNames: string[] = [];
+      scene.traverse((child: THREE.Object3D) => {
+        if (child.name) nodeNames.push(child.name);
+      });
+      expect(nodeNames.filter((name) => stickerNodePattern.test(name))).toEqual([]);
     } finally {
       if (originalSelf === undefined) {
         delete (globalThis as unknown as { self?: unknown }).self;

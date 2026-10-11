@@ -160,6 +160,19 @@
   transition-duration: 80ms !important;
 }
 
+/* ─── Mobile shell: safe areas + overscroll lock ──────────────────────────── */
+.safe-area-shell {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
 /* ─── Floating island nav pill (B7 fluid dynamics) ───────────────────────── */
 .nav-pill {
   transition:

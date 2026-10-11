@@ -1,6 +1,17 @@
 import * as THREE from 'three';
 import { WorldObstacle } from './types';
 
+// ── Touch gesture math (pure, unit-tested in tests/touchInput.test.ts) ──────
+// Spread (prev > next) → negative delta → zoom in (targetDistance shrinks).
+export function pinchZoomDelta(prevDist: number, dist: number): number {
+  return (dist - prevDist) * 0.06;
+}
+
+// Two-finger drag down → positive delta → camera rises (same as mouse pitch drag).
+export function pinchPitchDelta(prevMidY: number, midY: number): number {
+  return (midY - prevMidY) * 0.004;
+}
+
 export interface ThirdPersonCameraSystem {
   camera: THREE.PerspectiveCamera;
   update: (targetPos: THREE.Vector3, delta: number, facingAngle?: number) => void;
@@ -8,6 +19,8 @@ export interface ThirdPersonCameraSystem {
   onPointerDown: (event: PointerEvent) => void;
   onPointerMove: (event: PointerEvent) => void;
   onPointerUp: (event: PointerEvent) => void;
+  zoomBy: (delta: number) => void;
+  adjustPitch: (delta: number) => void;
   getAzimuthAngle: () => number;
   setDistance: (distance: number) => void;
   setOrbit: (yaw: number, pitchOffset?: number) => void;
@@ -146,6 +159,12 @@ export function createThirdPersonCamera(
     onPointerDown,
     onPointerMove,
     onPointerUp,
+    zoomBy: (delta: number) => {
+      targetDistance = clampDistance(targetDistance + delta);
+    },
+    adjustPitch: (delta: number) => {
+      pitchOffset = Math.max(-0.25, Math.min(0.35, pitchOffset + delta));
+    },
     getAzimuthAngle: () => yaw,
     setDistance: (dist: number) => {
       targetDistance = clampDistance(dist);

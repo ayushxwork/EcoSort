@@ -90,10 +90,10 @@
     "semantic_hash": "c68c2630949079114b99588ac0e9f209"
   },
   "src/components/game/MascotDialogue.tsx": {
-    "mtime": 1791493408.6712432,
-    "seen": 1791493656.849098,
-    "ast_hash": "de00b927663585558fecd3f28f369a0f",
-    "semantic_hash": "de00b927663585558fecd3f28f369a0f"
+    "mtime": 1791700007.1770647,
+    "seen": 1791700017.368212,
+    "ast_hash": "870bafa4f2d6afbbc60873f11d21fd5a",
+    "semantic_hash": ""
   },
   "src/components/game/QuizModal.tsx": {
     "mtime": 1791493492.60284,
@@ -402,9 +402,9 @@
     "semantic_hash": "328de20931b3b3abb436e705532dec92"
   },
   "src/components/world/WorldCanvas.tsx": {
-    "mtime": 1791649836.456632,
-    "seen": 1791651557.929195,
-    "ast_hash": "48aa81b3d6d9f57e720dde0b8212f7da",
+    "mtime": 1791700007.1790838,
+    "seen": 1791700017.368226,
+    "ast_hash": "c1968531e9b6c53db03f00779d6ff58f",
     "semantic_hash": ""
   },
   "src/components/world/levelStations.ts": {
@@ -414,15 +414,15 @@
     "semantic_hash": ""
   },
   "src/components/world/locomotion.ts": {
-    "mtime": 1791649836.4569025,
-    "seen": 1791651557.929219,
-    "ast_hash": "b3d59f37a41e41165f524b0e5f508377",
+    "mtime": 1791700007.1803286,
+    "seen": 1791700017.368277,
+    "ast_hash": "d812fca62406807de2b72c365336bba9",
     "semantic_hash": ""
   },
   "src/components/world/playerCharacter.ts": {
-    "mtime": 1791528451.6332097,
-    "seen": 1791528608.471141,
-    "ast_hash": "726f4796dbd06955c92821f261664752",
+    "mtime": 1791700007.1808105,
+    "seen": 1791700017.368278,
+    "ast_hash": "2f2ffed859982533c5f88b73690a2777",
     "semantic_hash": ""
   },
   "src/components/world/proceduralCity.ts": {
@@ -438,15 +438,15 @@
     "semantic_hash": ""
   },
   "src/components/world/types.ts": {
-    "mtime": 1791494458.967563,
-    "seen": 1791494759.22419,
-    "ast_hash": "b6f45040aef85e60c08cdc5226b2b70d",
+    "mtime": 1791700007.183848,
+    "seen": 1791700017.368284,
+    "ast_hash": "f56e0c9319464b595ec40782149415a5",
     "semantic_hash": ""
   },
   "tests/locomotion.test.ts": {
-    "mtime": 1791649848.1635168,
-    "seen": 1791651557.929237,
-    "ast_hash": "85cb9ca02f6e73b4941ca81afbdda827",
+    "mtime": 1791651820.6404388,
+    "seen": 1791653614.246083,
+    "ast_hash": "30ec946732318240f4e56b3f75950dd3",
     "semantic_hash": ""
   },
   ".agents/skills/frontend-design/LICENSE.txt": {
@@ -1068,51 +1068,15 @@
     "semantic_hash": ""
   },
   "scripts/generate_kai_glb.py": {
-    "mtime": 1791528280.6571167,
-    "seen": 1791528608.471105,
-    "ast_hash": "f142c04e7c1db8d3a90e5841754b8190",
+    "mtime": 1791700007.1764932,
+    "seen": 1791700017.3681889,
+    "ast_hash": "d2892ba67e72462e5327d5366ee2083d",
     "semantic_hash": ""
   },
   "tests/kaiGlb.test.ts": {
-    "mtime": 1791528567.6086812,
-    "seen": 1791528608.471157,
-    "ast_hash": "6885aa00e057e50feeed9abf8fc345d9",
-    "semantic_hash": ""
-  },
-  "public/images/kai_tex_backpack.png": {
-    "mtime": 1791499029.1740155,
-    "seen": 1791528608.471223,
-    "ast_hash": "ca0b4de0ddbe88b17d541658485c2357",
-    "semantic_hash": ""
-  },
-  "public/images/kai_tex_face.png": {
-    "mtime": 1791499029.1476166,
-    "seen": 1791528608.471224,
-    "ast_hash": "6ce2c1c9ce4cf6029b46ac7144b7b9db",
-    "semantic_hash": ""
-  },
-  "public/images/kai_tex_hair.png": {
-    "mtime": 1791499029.1875498,
-    "seen": 1791528608.471225,
-    "ast_hash": "eab29f4e9851cbb797e160aeb26a0528",
-    "semantic_hash": ""
-  },
-  "public/images/kai_tex_hoodie_front.png": {
-    "mtime": 1791499029.1552327,
-    "seen": 1791528608.471225,
-    "ast_hash": "e0d9cb44a65ef12d094e2eddde857301",
-    "semantic_hash": ""
-  },
-  "public/images/kai_tex_shorts.png": {
-    "mtime": 1791499029.1960192,
-    "seen": 1791528608.4712262,
-    "ast_hash": "7e3b6ce19ca9c5828646f84662408b91",
-    "semantic_hash": ""
-  },
-  "public/images/kai_tex_sneaker.png": {
-    "mtime": 1791499029.2073464,
-    "seen": 1791528608.471227,
-    "ast_hash": "8860528cbc1774393a6834d1bb8c99de",
+    "mtime": 1791700007.1844628,
+    "seen": 1791700017.36831,
+    "ast_hash": "657c8320009d1f408f7d6e989cb525e1",
     "semantic_hash": ""
   },
   "src/components/world/WorldPage.tsx": {
@@ -1212,15 +1176,15 @@
     "semantic_hash": ""
   },
   "src/components/world/litterScatter.ts": {
-    "mtime": 1791625078.403428,
-    "seen": 1791626423.098664,
-    "ast_hash": "0e4d5c91dff53a564060492b858b4e66",
+    "mtime": 1791700007.1798155,
+    "seen": 1791700017.368274,
+    "ast_hash": "08d239e84cb41cc5263635fc00988758",
     "semantic_hash": ""
   },
   "src/components/world/societyScene.ts": {
-    "mtime": 1791649860.4043038,
-    "seen": 1791651557.9292212,
-    "ast_hash": "b737c94ae9881fe5b1089d5711156e40",
+    "mtime": 1791700007.182824,
+    "seen": 1791700017.3682811,
+    "ast_hash": "43637378da18d28136168301edcdcf0e",
     "semantic_hash": ""
   },
   "src/hooks/useCountdownTimer.ts": {
@@ -1239,6 +1203,24 @@
     "mtime": 1791623231.2945108,
     "seen": 1791626423.098711,
     "ast_hash": "b2fb76706bb88d59be4641c570353f79",
+    "semantic_hash": ""
+  },
+  "tests/typingGuard.test.ts": {
+    "mtime": 1791654026.9926429,
+    "seen": 1791700017.36832,
+    "ast_hash": "30904d5015d21e996da7e239cdeebaa6",
+    "semantic_hash": ""
+  },
+  ".smoke-test.cjs": {
+    "mtime": 1791699819.7588093,
+    "seen": 1791700017.368164,
+    "ast_hash": "13ec7f66ad121d1b032f3e003d2c226d",
+    "semantic_hash": ""
+  },
+  "tests/societyScene.test.ts": {
+    "mtime": 1791699927.2675304,
+    "seen": 1791700017.368315,
+    "ast_hash": "313aa658f8cebf463fcaeb442c6a434c",
     "semantic_hash": ""
   }
 }

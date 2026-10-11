@@ -8,7 +8,8 @@
  *   Z = -12  → Building façade (top)
  *   Z = -8   → Building façade
  *   Z = -3.8 → Bin row, straight along the building front (openings face +Z)
- *   Z =  0   → Open compound / scattered litter
+ *             + information board beside the station (left side, faces +Z)
+ *   Z =  0   → Open compound / scattered litter (bench on the right, faces -X)
  *   Z =  6   → Society entrance gate
  *   Z = 11   → Road + truck path (bottom, opposite side)
  */
@@ -16,7 +17,8 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { BinType } from '../../types/game';
-import { WorldObstacle } from './types';
+import { ALL_BINS } from '../../data/bins';
+import { WorldObstacle, PinnedLitterSpot } from './types';
 
 export interface SocietySceneResult {
   societyGroup: THREE.Group;
@@ -24,11 +26,13 @@ export interface SocietySceneResult {
   binMeshes: Map<BinType, THREE.Mesh>;
   binTriggers: Map<BinType, THREE.Mesh>;
   binGlowRings: Map<BinType, THREE.Mesh>;
-  litterSpawnPoints: THREE.Vector3[];   // 12 visible positions
+  litterSpawnPoints: THREE.Vector3[];   // free positions for randomly sampled litter
   hiddenSpawnPoints: THREE.Vector3[];   // 3 behind bench / plants
+  pinnedLitterSpots: PinnedLitterSpot[]; // fixed item types at fixed positions
   truckMesh: THREE.Group;
   truckStartPos: THREE.Vector3;
   truckEndPos: THREE.Vector3;
+  binRowCenter: THREE.Vector3;       // centre of the dustbin row — used to face the player at spawn
   animate: (elapsed: number, delta: number) => void;
   triggerBinAnimation: (bin: BinType) => void;
   animateTruckArrival: (progress: number) => void;
@@ -48,6 +52,18 @@ const BIN_COLORS: Record<BinType, number> = {
   reuse: 0x0d9488,
 };
 
+// Short kid-friendly names for the ECO TIPS board lines
+const TIP_LABELS: Record<BinType, string> = {
+  wet: 'Wet',
+  dry: 'Dry',
+  paper: 'Paper',
+  plastic: 'Plastic',
+  hazardous: 'Danger',
+  ewaste: 'E-waste',
+  reuse: 'Reuse',
+  residual: 'Rest',
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Canvas texture helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -56,7 +72,8 @@ function makeBinIconTexture(binType: BinType): THREE.CanvasTexture {
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 256;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return new THREE.CanvasTexture(canvas); // headless (jsdom) fallback
 
   ctx.clearRect(0, 0, 256, 256);
   ctx.fillStyle = '#ffffff';
@@ -162,7 +179,8 @@ function makeConcreteTex(): THREE.CanvasTexture {
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 256;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return new THREE.CanvasTexture(canvas); // headless (jsdom) fallback
 
   ctx.fillStyle = '#b0a898';
   ctx.fillRect(0, 0, 256, 256);
@@ -188,7 +206,8 @@ function makeWallTex(base: string): THREE.CanvasTexture {
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 256;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return new THREE.CanvasTexture(canvas); // headless (jsdom) fallback
 
   ctx.fillStyle = base;
   ctx.fillRect(0, 0, 256, 256);
@@ -360,19 +379,21 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
   const nameCanvas = document.createElement('canvas');
   nameCanvas.width = 256;
   nameCanvas.height = 64;
-  const nc = nameCanvas.getContext('2d')!;
-  nc.fillStyle = '#c77741';
-  nc.fillRect(0, 0, 256, 64);
-  nc.fillStyle = '#ffffff';
-  nc.font = 'bold 20px sans-serif';
-  nc.textAlign = 'center';
-  nc.textBaseline = 'middle';
-  nc.fillText('ECO SOCIETY', 128, 32);
-  const nameTex = new THREE.CanvasTexture(nameCanvas);
-  const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: nameTex }));
-  nameSprite.position.set(0, 8.4, -8.0);
-  nameSprite.scale.set(3.5, 0.9, 1);
-  group.add(nameSprite);
+  const nc = nameCanvas.getContext('2d');
+  if (nc) {
+    nc.fillStyle = '#c77741';
+    nc.fillRect(0, 0, 256, 64);
+    nc.fillStyle = '#ffffff';
+    nc.font = 'bold 20px sans-serif';
+    nc.textAlign = 'center';
+    nc.textBaseline = 'middle';
+    nc.fillText('ECO SOCIETY', 128, 32);
+    const nameTex = new THREE.CanvasTexture(nameCanvas);
+    const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: nameTex }));
+    nameSprite.position.set(0, 8.4, -8.0);
+    nameSprite.scale.set(3.5, 0.9, 1);
+    group.add(nameSprite);
+  }
 
   // ── Compound Perimeter Walls ──────────────────────────────────────────────
   const wallH = 2.2;
@@ -421,26 +442,6 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
   platform.position.set(BIN_ROW_X, 0.06, BIN_ROW_Z);
   platform.receiveShadow = true;
   group.add(platform);
-
-  // "WASTE COLLECTION" marking on platform
-  const markCanvas = document.createElement('canvas');
-  markCanvas.width = 256;
-  markCanvas.height = 64;
-  const mc = markCanvas.getContext('2d')!;
-  mc.fillStyle = '#fbbf24';
-  mc.fillRect(0, 0, 256, 64);
-  mc.fillStyle = '#1e293b';
-  mc.font = 'bold 13px sans-serif';
-  mc.textAlign = 'center';
-  mc.textBaseline = 'middle';
-  mc.fillText('WASTE COLLECTION', 128, 32);
-  const markTex = new THREE.CanvasTexture(markCanvas);
-  const markSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: markTex }));
-  // Lying flat on the platform, just in front of the bin row so it stays visible
-  markSprite.position.set(BIN_ROW_X, 0.15, BIN_ROW_Z + 1.1);
-  markSprite.scale.set(4.5, 1.1, 1);
-  markSprite.rotation.x = -Math.PI / 2;
-  group.add(markSprite);
 
   // ── 4 Color-coded Bins — straight row along the building front ──────────────
   // Openings / icons face +Z: toward the player spawn and the compound entrance.
@@ -574,38 +575,48 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
   group.add(lampMesh);
 
   // ── Bench ─────────────────────────────────────────────────────────────────
+  // Right side of the park, near the tree at (8.5, -1). Rotated so the seat
+  // faces the open centre of the compound (-X) instead of the bin row.
+  const benchGroup = new THREE.Group();
+  benchGroup.position.set(6.5, 0, 0.5);
+  benchGroup.rotation.y = Math.PI / 2;
+
   const benchMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.7 });
-  const seatGeo = new THREE.BoxGeometry(2.2, 0.1, 0.7);
-  const seat = new THREE.Mesh(seatGeo, benchMat);
-  seat.position.set(6.5, 0.55, 0.5);
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.1, 0.7), benchMat);
+  seat.position.set(0, 0.55, 0);
   seat.castShadow = true;
   seat.receiveShadow = true;
-  group.add(seat);
+  benchGroup.add(seat);
 
-  const backGeo = new THREE.BoxGeometry(2.2, 0.8, 0.1);
-  const back = new THREE.Mesh(backGeo, benchMat);
-  back.position.set(6.5, 0.95, 0.85);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.8, 0.1), benchMat);
+  back.position.set(0, 0.95, 0.35);
   back.castShadow = true;
-  group.add(back);
+  benchGroup.add(back);
 
   // Legs
   const legMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6, metalness: 0.2 });
-  [[-0.9, 0.2], [0.9, 0.2], [-0.9, 0.8], [0.9, 0.8]].forEach(([x, z]) => {
-    const legGeo = new THREE.BoxGeometry(0.1, 0.55, 0.1);
-    const leg = new THREE.Mesh(legGeo, legMat);
-    leg.position.set(6.5 + x, 0.275, z);
-    group.add(leg);
+  [[-0.9, -0.3], [0.9, -0.3], [-0.9, 0.3], [0.9, 0.3]].forEach(([x, z]) => {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.55, 0.1), legMat);
+    leg.position.set(x, 0.275, z);
+    benchGroup.add(leg);
   });
+  group.add(benchGroup);
 
-  // Bench obstacle
-  obstacles.push({ id: 'bench', type: 'prop', minX: 5.3, maxX: 7.7, minZ: 0.0, maxZ: 1.1 });
+  // Bench obstacle (rotated footprint: long axis now runs along Z)
+  obstacles.push({ id: 'bench', type: 'prop', minX: 6.1, maxX: 6.9, minZ: -0.6, maxZ: 1.6 });
 
   // ── Decorative Trees / Plants ─────────────────────────────────────────────
   const trunkMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.8 });
   const leafMat = new THREE.MeshStandardMaterial({ color: 0x16a34a, roughness: 0.7 });
   const leafMat2 = new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.7 });
 
-  const treePositions: [number, number][] = [[-9, -5], [-8, 1.5], [8.5, -1], [8, -6]];
+  // Four boundary trees: front-left, left-middle, back-right, right (beyond bench)
+  const treePositions: [number, number][] = [
+    [-10.5, 5],   // Tree 1: front-left corner, clear of the gate opening
+    [-10.5, -1],  // Tree 2: left-middle boundary, spaced from Tree 1
+    [9.5, -9],    // Tree 3: back-right corner, right of the building, away from bins
+    [10.5, 0.5],  // Tree 4: right boundary, beyond the bench near the right wall
+  ];
   treePositions.forEach(([tx, tz]) => {
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 1.6, 8), trunkMat);
     trunk.position.set(tx, 0.8, tz);
@@ -635,6 +646,63 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
   group.add(bush);
 
   obstacles.push({ id: 'bush', type: 'prop', minX: 4.8, maxX: 6.2, minZ: 1.6, maxZ: 2.8 });
+
+  // ── Information Board ─────────────────────────────────────────────────────
+  // Beside the waste station (just off the left edge of the bin platform),
+  // readable face turned toward the entrance gate and the player spawn.
+  const boardGroup = new THREE.Group();
+  boardGroup.position.set(-6, 0, -3.8);
+
+  const boardPostMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.6, metalness: 0.2 });
+  for (const bx of [-0.7, 0.7]) {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.0, 8), boardPostMat);
+    post.position.set(bx, 1.0, 0);
+    post.castShadow = true;
+    boardGroup.add(post);
+  }
+
+  const boardPanel = new THREE.Mesh(
+    new THREE.BoxGeometry(1.8, 1.1, 0.08),
+    new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.7 })
+  );
+  boardPanel.position.set(0, 1.5, 0);
+  boardPanel.castShadow = true;
+  boardGroup.add(boardPanel);
+
+  // "ECO TIPS" sign face on the +Z side (toward the entrance / player)
+  const boardCanvas = document.createElement('canvas');
+  boardCanvas.width = 512;
+  boardCanvas.height = 320;
+  const bc = boardCanvas.getContext('2d');
+  if (bc) {
+    bc.fillStyle = '#f0fdf4';
+    bc.fillRect(0, 0, 512, 320);
+    bc.strokeStyle = '#166534';
+    bc.lineWidth = 14;
+    bc.strokeRect(7, 7, 498, 306);
+    bc.fillStyle = '#166534';
+    bc.font = 'bold 52px sans-serif';
+    bc.textAlign = 'center';
+    bc.textBaseline = 'middle';
+    bc.fillText('ECO TIPS', 256, 62);
+    bc.font = 'bold 32px sans-serif';
+    bc.fillStyle = '#1e293b';
+    const tipStartY = 126;
+    const tipGap = Math.min(46, 170 / Math.max(activeBins.length, 1));
+    activeBins.forEach((binType, i) => {
+      bc.fillText(`${TIP_LABELS[binType]}  →  ${ALL_BINS[binType].label}`, 256, tipStartY + i * tipGap);
+    });
+    const boardTex = new THREE.CanvasTexture(boardCanvas);
+    const boardSign = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.6, 1.0),
+      new THREE.MeshBasicMaterial({ map: boardTex })
+    );
+    boardSign.position.set(0, 1.5, 0.05);
+    boardGroup.add(boardSign);
+  }
+
+  group.add(boardGroup);
+  obstacles.push({ id: 'info_board', type: 'prop', minX: -6.9, maxX: -5.1, minZ: -4.0, maxZ: -3.6 });
 
   // ── Garbage Truck ─────────────────────────────────────────────────────────
   const truckGroup = new THREE.Group();
@@ -721,27 +789,33 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
   group.add(truckGroup);
 
   // ── Spawn Points ──────────────────────────────────────────────────────────
-  // 12 visible spawn points across the compound
+  // Free visible points, grouped around the open park:
+  //   • 2 in front of the bin row (first grabs, already near the station)
+  //   • 2 by the left-side trees
+  //   • 1 on the central path from the gate
+  //   • 1 by the bench cluster on the right
   const litterSpawnPoints: THREE.Vector3[] = [
-    new THREE.Vector3(-6, 0.05, -1),
-    new THREE.Vector3(-4.5, 0.05, 1.5),
-    new THREE.Vector3(-3, 0.05, 3.5),
-    new THREE.Vector3(-1.5, 0.05, 1),
-    new THREE.Vector3(0.5, 0.05, 2.5),
-    new THREE.Vector3(2, 0.05, 4.5),
-    new THREE.Vector3(3.5, 0.05, 1.5),
-    new THREE.Vector3(4.5, 0.05, 3.5),
-    new THREE.Vector3(-7, 0.05, 3),
-    new THREE.Vector3(-5, 0.05, 5),
-    new THREE.Vector3(1, 0.05, -1.5),
-    new THREE.Vector3(-2, 0.05, -0.5),
+    new THREE.Vector3(-2.5, 0.05, -1.8), // in front of the bins
+    new THREE.Vector3(1.5, 0.05, -1.6),  // in front of the bins
+    new THREE.Vector3(-7.5, 0.05, 0.8),  // left trees
+    new THREE.Vector3(-5.5, 0.05, 3.5),  // left, toward the gate
+    new THREE.Vector3(-1, 0.05, 4.5),    // central path
+    new THREE.Vector3(4, 0.05, 0.8),     // right, near the bench
+  ];
+
+  // Fixed item types at fixed spots — a banana peel on the path, a bottle by
+  // the bench, and a cardboard box far from the bins.
+  const pinnedLitterSpots: PinnedLitterSpot[] = [
+    { position: new THREE.Vector3(1.2, 0.05, 5.2), itemId: 'banana_peel' },
+    { position: new THREE.Vector3(5.3, 0.05, -0.6), itemId: 'plastic_bottle_water' },
+    { position: new THREE.Vector3(-4.2, 0.05, 5.6), itemId: 'soiled_cardboard' },
   ];
 
   // 3 hidden spawn points (behind bench and bush)
   const hiddenSpawnPoints: THREE.Vector3[] = [
-    new THREE.Vector3(6.8, 0.05, 1.2),  // behind bench
-    new THREE.Vector3(5.3, 0.05, 2.4),  // behind bush
-    new THREE.Vector3(6.2, 0.05, 0.4),  // beside bench
+    new THREE.Vector3(7.3, 0.05, 0.5), // behind the bench (backrest side)
+    new THREE.Vector3(5.3, 0.05, 2.4), // behind bush
+    new THREE.Vector3(6.5, 0.05, 1.9), // beside the bench
   ];
 
   // ── Animate helper ────────────────────────────────────────────────────────
@@ -811,9 +885,11 @@ export function createSocietyScene(activeBins: BinType[] = ['wet', 'dry', 'hazar
     binGlowRings,
     litterSpawnPoints,
     hiddenSpawnPoints,
+    pinnedLitterSpots,
     truckMesh: truckGroup,
     truckStartPos,
     truckEndPos,
+    binRowCenter: new THREE.Vector3(BIN_ROW_X, 0, BIN_ROW_Z),
     animate,
     triggerBinAnimation,
     animateTruckArrival,

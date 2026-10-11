@@ -37,201 +37,6 @@
   },
   "nodes": [
     {
-      "id": "src_components_game_cleanlinessmeter_cleanlinessmeterprops",
-      "label": "CleanlinessMeterProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "cleanlinessmeterprops",
-      "source_file": "src/components/game/CleanlinessMeter.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_game_countdowntimer_countdowntimerprops",
-      "label": "CountdownTimerProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "countdowntimerprops",
-      "source_file": "src/components/game/CountdownTimer.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_game_ecopediamodal_ecopediamodalprops",
-      "label": "EcopediaModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "ecopediamodalprops",
-      "source_file": "src/components/game/EcopediaModal.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_game_energymeterhud_energymeterhudprops",
-      "label": "EnergyMeterHUDProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "energymeterhudprops",
-      "source_file": "src/components/game/EnergyMeterHUD.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_game_mascotdialogue_mascotdialogueprops",
-      "label": "MascotDialogueProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "mascotdialogueprops",
-      "source_file": "src/components/game/MascotDialogue.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_game_quizmodal_quizmodalprops",
-      "label": "QuizModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "quizmodalprops",
-      "source_file": "src/components/game/QuizModal.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_types_game_quizquestion",
-      "label": "QuizQuestion",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "quizquestion",
-      "source_file": "src/types/game.ts",
-      "source_location": "L69"
-    },
-    {
-      "id": "src_components_game_levelendmodal_levelendmodalprops",
-      "label": "LevelEndModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "levelendmodalprops",
-      "source_file": "src/components/game/LevelEndModal.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_game_threescene_threesceneprops",
-      "label": "ThreeSceneProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "threesceneprops",
-      "source_file": "src/components/game/ThreeScene.tsx",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_components_items_mapitemcard_mapitemcardprops",
-      "label": "MapItemCardProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "mapitemcardprops",
-      "source_file": "src/components/items/MapItemCard.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_items_mapitemgallerymodal_mapitemgallerymodalprops",
-      "label": "MapItemGalleryModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "mapitemgallerymodalprops",
-      "source_file": "src/components/items/MapItemGalleryModal.tsx",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_components_world_worldcanvas_worldcanvasprops",
-      "label": "WorldCanvasProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "worldcanvasprops",
-      "source_file": "src/components/world/WorldCanvas.tsx",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_services_spawner_adaptivespawner",
-      "label": "AdaptiveSpawner",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "adaptivespawner",
-      "source_file": "src/services/spawner.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_types_game_bintype",
-      "label": "BinType",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "bintype",
-      "source_file": "src/types/game.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_types_game_itemdata",
-      "label": "ItemData",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "itemdata",
-      "source_file": "src/types/game.ts",
-      "source_location": "L14"
-    },
-    {
       "id": "src_components_world_items_mapiteminstance_mapiteminstance",
       "label": "MapItemInstance",
       "_callable": true,
@@ -256,32 +61,6 @@
       "norm_label": "mapitemmanager",
       "source_file": "src/components/world/items/MapItemManager.ts",
       "source_location": "L16"
-    },
-    {
-      "id": "src_components_world_items_mapitemmanager_mapitemmanageroptions",
-      "label": "MapItemManagerOptions",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "WorldCanvas",
-      "file_type": "code",
-      "norm_label": "mapitemmanageroptions",
-      "source_file": "src/components/world/items/MapItemManager.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_components_world_items_types_mapitemconfig",
-      "label": "MapItemConfig",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "WorldCanvas",
-      "file_type": "code",
-      "norm_label": "mapitemconfig",
-      "source_file": "src/components/world/items/types.ts",
-      "source_location": "L39"
     },
     {
       "id": "src_components_world_items_types_mapitemstate",
@@ -336,71 +115,6 @@
       "source_location": "L4"
     },
     {
-      "id": "src_components_game_levelselectmodal_levelselectmodalprops",
-      "label": "LevelSelectModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "levelselectmodalprops",
-      "source_file": "src/components/game/LevelSelectModal.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_types_game_bininfo",
-      "label": "BinInfo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "bininfo",
-      "source_file": "src/types/game.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_types_game_levelconfig",
-      "label": "LevelConfig",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "levelconfig",
-      "source_file": "src/types/game.ts",
-      "source_location": "L56"
-    },
-    {
-      "id": "src_services_api_saveprogresspayload",
-      "label": "SaveProgressPayload",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "saveprogresspayload",
-      "source_file": "src/services/api.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_types_game_teacherreportstats",
-      "label": "TeacherReportStats",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "teacherreportstats",
-      "source_file": "src/types/game.ts",
-      "source_location": "L90"
-    },
-    {
       "id": "src_components_world_litterscatter_litterscattersystem",
       "label": "LitterScatterSystem",
       "_callable": true,
@@ -425,6 +139,45 @@
       "norm_label": "scattereditem",
       "source_file": "src/components/world/litterScatter.ts",
       "source_location": "L12"
+    },
+    {
+      "id": "src_components_game_avatarselectmodal_avatarselectmodalprops",
+      "label": "AvatarSelectModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "avatarselectmodalprops",
+      "source_file": "src/components/game/AvatarSelectModal.tsx",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_components_game_cleanlinessmeter_cleanlinessmeterprops",
+      "label": "CleanlinessMeterProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "cleanlinessmeterprops",
+      "source_file": "src/components/game/CleanlinessMeter.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_game_countdowntimer_countdowntimerprops",
+      "label": "CountdownTimerProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "countdowntimerprops",
+      "source_file": "src/components/game/CountdownTimer.tsx",
+      "source_location": "L4"
     },
     {
       "id": "src_components_game_ecolensoverlay_ecolensbuttonprops",
@@ -453,6 +206,19 @@
       "source_location": "L6"
     },
     {
+      "id": "src_components_game_ecopediamodal_ecopediamodalprops",
+      "label": "EcopediaModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "ecopediamodalprops",
+      "source_file": "src/components/game/EcopediaModal.tsx",
+      "source_location": "L7"
+    },
+    {
       "id": "src_components_game_ecosortgame_ecosortgameprops",
       "label": "EcoSortGameProps",
       "_callable": true,
@@ -464,6 +230,175 @@
       "norm_label": "ecosortgameprops",
       "source_file": "src/components/game/EcoSortGame.tsx",
       "source_location": "L4"
+    },
+    {
+      "id": "src_components_game_energymeterhud_energymeterhudprops",
+      "label": "EnergyMeterHUDProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "energymeterhudprops",
+      "source_file": "src/components/game/EnergyMeterHUD.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_game_levelendmodal_levelendmodalprops",
+      "label": "LevelEndModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "levelendmodalprops",
+      "source_file": "src/components/game/LevelEndModal.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_components_game_levelselectmodal_levelselectmodalprops",
+      "label": "LevelSelectModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "levelselectmodalprops",
+      "source_file": "src/components/game/LevelSelectModal.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_game_mascotdialogue_mascotdialogueprops",
+      "label": "MascotDialogueProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mascotdialogueprops",
+      "source_file": "src/components/game/MascotDialogue.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_missionerror",
+      "label": "MissionError",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "missionerror",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_missionresultsmodalprops",
+      "label": "MissionResultsModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "missionresultsmodalprops",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_rating",
+      "label": "Rating",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "rating",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L27"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_statcardprops",
+      "label": "StatCardProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "statcardprops",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L174"
+    },
+    {
+      "id": "src_components_game_quizmodal_quizmodalprops",
+      "label": "QuizModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "quizmodalprops",
+      "source_file": "src/components/game/QuizModal.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_components_game_threescene_threesceneprops",
+      "label": "ThreeSceneProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "threesceneprops",
+      "source_file": "src/components/game/ThreeScene.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_components_items_mapitemcard_mapitemcardprops",
+      "label": "MapItemCardProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mapitemcardprops",
+      "source_file": "src/components/items/MapItemCard.tsx",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_components_items_mapitemgallerymodal_mapitemgallerymodalprops",
+      "label": "MapItemGalleryModalProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mapitemgallerymodalprops",
+      "source_file": "src/components/items/MapItemGalleryModal.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_components_world_worldcanvas_worldcanvasprops",
+      "label": "WorldCanvasProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "worldcanvasprops",
+      "source_file": "src/components/world/WorldCanvas.tsx",
+      "source_location": "L27"
     },
     {
       "id": "src_components_world_worldpage_worldpageprops",
@@ -505,6 +440,32 @@
       "source_location": "L3"
     },
     {
+      "id": "src_services_api_saveprogresspayload",
+      "label": "SaveProgressPayload",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "saveprogresspayload",
+      "source_file": "src/services/api.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_services_spawner_adaptivespawner",
+      "label": "AdaptiveSpawner",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "adaptivespawner",
+      "source_file": "src/services/spawner.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "src_systems_ecolens_ecolensstate",
       "label": "EcoLensState",
       "_callable": true,
@@ -518,69 +479,56 @@
       "source_location": "L3"
     },
     {
-      "id": "src_components_game_missionresultsmodal_missionerror",
-      "label": "MissionError",
+      "id": "src_types_game_bininfo",
+      "label": "BinInfo",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
       "file_type": "code",
-      "norm_label": "missionerror",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L6"
+      "norm_label": "bininfo",
+      "source_file": "src/types/game.ts",
+      "source_location": "L3"
     },
     {
-      "id": "src_components_game_missionresultsmodal_missionresultsmodalprops",
-      "label": "MissionResultsModalProps",
+      "id": "src_types_game_bintype",
+      "label": "BinType",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
       "file_type": "code",
-      "norm_label": "missionresultsmodalprops",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "norm_label": "bintype",
+      "source_file": "src/types/game.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_types_game_itemdata",
+      "label": "ItemData",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "itemdata",
+      "source_file": "src/types/game.ts",
       "source_location": "L14"
     },
     {
-      "id": "src_components_game_missionresultsmodal_rating",
-      "label": "Rating",
+      "id": "src_types_game_levelconfig",
+      "label": "LevelConfig",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
       "file_type": "code",
-      "norm_label": "rating",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_components_game_missionresultsmodal_statcardprops",
-      "label": "StatCardProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
-      "file_type": "code",
-      "norm_label": "statcardprops",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L174"
-    },
-    {
-      "id": "src_components_game_avatarselectmodal_avatarselectmodalprops",
-      "label": "AvatarSelectModalProps",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "AvatarSelectModal.tsx",
-      "file_type": "code",
-      "norm_label": "avatarselectmodalprops",
-      "source_file": "src/components/game/AvatarSelectModal.tsx",
-      "source_location": "L5"
+      "norm_label": "levelconfig",
+      "source_file": "src/types/game.ts",
+      "source_location": "L56"
     },
     {
       "id": "src_types_game_playerprofile",
@@ -588,12 +536,38 @@
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 43,
-      "community_name": "AvatarSelectModal.tsx",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
       "file_type": "code",
       "norm_label": "playerprofile",
       "source_file": "src/types/game.ts",
       "source_location": "L79"
+    },
+    {
+      "id": "src_types_game_quizquestion",
+      "label": "QuizQuestion",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "quizquestion",
+      "source_file": "src/types/game.ts",
+      "source_location": "L69"
+    },
+    {
+      "id": "src_types_game_teacherreportstats",
+      "label": "TeacherReportStats",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "teacherreportstats",
+      "source_file": "src/types/game.ts",
+      "source_location": "L90"
     },
     {
       "id": "src_services_audio_audioservice",
@@ -635,6 +609,19 @@
       "source_location": "L7"
     },
     {
+      "id": "src_components_world_items_mapitemmanager_mapitemmanageroptions",
+      "label": "MapItemManagerOptions",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": "mapitemmanageroptions",
+      "source_file": "src/components/world/items/MapItemManager.ts",
+      "source_location": "L6"
+    },
+    {
       "id": "src_components_world_items_types_itemmeshoptions",
       "label": "ItemMeshOptions",
       "_callable": true,
@@ -646,6 +633,19 @@
       "norm_label": "itemmeshoptions",
       "source_file": "src/components/world/items/types.ts",
       "source_location": "L30"
+    },
+    {
+      "id": "src_components_world_items_types_mapitemconfig",
+      "label": "MapItemConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": "mapitemconfig",
+      "source_file": "src/components/world/items/types.ts",
+      "source_location": "L39"
     },
     {
       "id": "src_components_world_items_types_mapitemmodeltype",
@@ -736,7 +736,7 @@
       "file_type": "code",
       "norm_label": "societysceneresult",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L19"
+      "source_location": "L21"
     },
     {
       "id": "src_components_world_thirdpersoncamera_thirdpersoncamerasystem",
@@ -830,18 +830,6 @@
       "source_location": "L50"
     },
     {
-      "id": "src_components_game_energymeterhud_energymeterhud",
-      "label": "EnergyMeterHUD()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "energymeterhud()",
-      "source_file": "src/components/game/EnergyMeterHUD.tsx",
-      "source_location": "L13"
-    },
-    {
       "id": "backend_handlers_ask_eco_handler",
       "label": "handler()",
       "_callable": true,
@@ -890,54 +878,6 @@
       "source_location": "L20"
     },
     {
-      "id": "src_services_spawner_adaptivespawner_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/services/spawner.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_services_spawner_adaptivespawner_getnextitem",
-      "label": ".getNextItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": ".getnextitem()",
-      "source_file": "src/services/spawner.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_services_spawner_adaptivespawner_pickweighted",
-      "label": ".pickWeighted()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": ".pickweighted()",
-      "source_file": "src/services/spawner.ts",
-      "source_location": "L67"
-    },
-    {
-      "id": "src_services_spawner_adaptivespawner_recordattempt",
-      "label": ".recordAttempt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": ".recordattempt()",
-      "source_file": "src/services/spawner.ts",
-      "source_location": "L25"
-    },
-    {
       "id": "src_components_world_items_mapiteminstance_mapiteminstance_collect",
       "label": ".collect()",
       "_callable": true,
@@ -948,18 +888,6 @@
       "norm_label": ".collect()",
       "source_file": "src/components/world/items/MapItemInstance.ts",
       "source_location": "L196"
-    },
-    {
-      "id": "src_components_world_items_mapiteminstance_mapiteminstance_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "WorldCanvas",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/components/world/items/MapItemInstance.ts",
-      "source_location": "L29"
     },
     {
       "id": "src_components_world_items_mapiteminstance_mapiteminstance_dispose",
@@ -996,18 +924,6 @@
       "norm_label": ".respawn()",
       "source_file": "src/components/world/items/MapItemInstance.ts",
       "source_location": "L204"
-    },
-    {
-      "id": "src_components_world_items_mapiteminstance_mapiteminstance_setupplacementmode",
-      "label": ".setupPlacementMode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "WorldCanvas",
-      "file_type": "code",
-      "norm_label": ".setupplacementmode()",
-      "source_file": "src/components/world/items/MapItemInstance.ts",
-      "source_location": "L72"
     },
     {
       "id": "src_components_world_items_mapiteminstance_mapiteminstance_update",
@@ -1202,78 +1118,6 @@
       "source_location": "L8"
     },
     {
-      "id": "src_components_items_mapitemcard_mapitemcard",
-      "label": "MapItemCard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "mapitemcard()",
-      "source_file": "src/components/items/MapItemCard.tsx",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_components_items_mapitemgallerymodal_mapitemgallerymodal",
-      "label": "MapItemGalleryModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "mapitemgallerymodal()",
-      "source_file": "src/components/items/MapItemGalleryModal.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_components_items_mapitempreview_mapitempreview",
-      "label": "MapItemPreview()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "mapitempreview()",
-      "source_file": "src/components/items/MapItemPreview.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_data_quizzes_getitem",
-      "label": "getItem()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "getitem()",
-      "source_file": "src/data/quizzes.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_game_threescene_threescene",
-      "label": "ThreeScene()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "createLitterScatter",
-      "file_type": "code",
-      "norm_label": "threescene()",
-      "source_file": "src/components/game/ThreeScene.tsx",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_components_world_items_createitemmesh_disposeitemmesh",
-      "label": "disposeItemMesh()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "createLitterScatter",
-      "file_type": "code",
-      "norm_label": "disposeitemmesh()",
-      "source_file": "src/components/world/items/createItemMesh.ts",
-      "source_location": "L198"
-    },
-    {
       "id": "src_components_world_litterscatter_createlitterscatter",
       "label": "createLitterScatter()",
       "_callable": true,
@@ -1406,6 +1250,18 @@
       "source_location": "L39"
     },
     {
+      "id": "src_components_game_avatarselectmodal_avatarselectmodal",
+      "label": "AvatarSelectModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "avatarselectmodal()",
+      "source_file": "src/components/game/AvatarSelectModal.tsx",
+      "source_location": "L13"
+    },
+    {
       "id": "src_components_game_cleanlinessmeter_cleanlinessmeter",
       "label": "CleanlinessMeter()",
       "_callable": true,
@@ -1478,6 +1334,18 @@
       "source_location": "L6"
     },
     {
+      "id": "src_components_game_energymeterhud_energymeterhud",
+      "label": "EnergyMeterHUD()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "energymeterhud()",
+      "source_file": "src/components/game/EnergyMeterHUD.tsx",
+      "source_location": "L13"
+    },
+    {
       "id": "src_components_game_levelendmodal_levelendmodal",
       "label": "LevelEndModal()",
       "_callable": true,
@@ -1514,6 +1382,42 @@
       "source_location": "L11"
     },
     {
+      "id": "src_components_game_missionresultsmodal_getrating",
+      "label": "getRating()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "getrating()",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_missionresultsmodal",
+      "label": "MissionResultsModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "missionresultsmodal()",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L63"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_statcard",
+      "label": "StatCard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "statcard()",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L181"
+    },
+    {
       "id": "src_components_game_quizmodal_quizmodal",
       "label": "QuizModal()",
       "_callable": true,
@@ -1524,6 +1428,30 @@
       "norm_label": "quizmodal()",
       "source_file": "src/components/game/QuizModal.tsx",
       "source_location": "L12"
+    },
+    {
+      "id": "src_components_items_mapitemcard_mapitemcard",
+      "label": "MapItemCard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mapitemcard()",
+      "source_file": "src/components/items/MapItemCard.tsx",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_components_items_mapitemgallerymodal_mapitemgallerymodal",
+      "label": "MapItemGalleryModal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mapitemgallerymodal()",
+      "source_file": "src/components/items/MapItemGalleryModal.tsx",
+      "source_location": "L15"
     },
     {
       "id": "src_components_world_worldpage_worldpage",
@@ -1538,6 +1466,18 @@
       "source_location": "L48"
     },
     {
+      "id": "src_data_quizzes_getitem",
+      "label": "getItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "getitem()",
+      "source_file": "src/data/quizzes.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "src_hooks_usecountdowntimer_usecountdowntimer",
       "label": "useCountdownTimer()",
       "_callable": true,
@@ -1548,6 +1488,54 @@
       "norm_label": "usecountdowntimer()",
       "source_file": "src/hooks/useCountdownTimer.ts",
       "source_location": "L23"
+    },
+    {
+      "id": "src_services_spawner_adaptivespawner_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/services/spawner.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_services_spawner_adaptivespawner_getnextitem",
+      "label": ".getNextItem()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": ".getnextitem()",
+      "source_file": "src/services/spawner.ts",
+      "source_location": "L35"
+    },
+    {
+      "id": "src_services_spawner_adaptivespawner_pickweighted",
+      "label": ".pickWeighted()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": ".pickweighted()",
+      "source_file": "src/services/spawner.ts",
+      "source_location": "L67"
+    },
+    {
+      "id": "src_services_spawner_adaptivespawner_recordattempt",
+      "label": ".recordAttempt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": ".recordattempt()",
+      "source_file": "src/services/spawner.ts",
+      "source_location": "L25"
     },
     {
       "id": "src_systems_ecolens_activatelens",
@@ -1596,54 +1584,6 @@
       "norm_label": "ticklenscooldown()",
       "source_file": "src/systems/ecoLens.ts",
       "source_location": "L50"
-    },
-    {
-      "id": "src_components_game_missionresultsmodal_getrating",
-      "label": "getRating()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
-      "file_type": "code",
-      "norm_label": "getrating()",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L29"
-    },
-    {
-      "id": "src_components_game_missionresultsmodal_missionresultsmodal",
-      "label": "MissionResultsModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
-      "file_type": "code",
-      "norm_label": "missionresultsmodal()",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L63"
-    },
-    {
-      "id": "src_components_game_missionresultsmodal_statcard",
-      "label": "StatCard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
-      "file_type": "code",
-      "norm_label": "statcard()",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L181"
-    },
-    {
-      "id": "src_components_game_avatarselectmodal_avatarselectmodal",
-      "label": "AvatarSelectModal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "AvatarSelectModal.tsx",
-      "file_type": "code",
-      "norm_label": "avatarselectmodal()",
-      "source_file": "src/components/game/AvatarSelectModal.tsx",
-      "source_location": "L13"
     },
     {
       "id": "src_services_audio_audioservice_constructor",
@@ -2030,6 +1970,30 @@
       "source_location": "L75"
     },
     {
+      "id": "src_components_game_threescene_threescene",
+      "label": "ThreeScene()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": "threescene()",
+      "source_file": "src/components/game/ThreeScene.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_components_items_mapitempreview_mapitempreview",
+      "label": "MapItemPreview()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": "mapitempreview()",
+      "source_file": "src/components/items/MapItemPreview.tsx",
+      "source_location": "L15"
+    },
+    {
       "id": "src_components_world_items_createitemmesh_createitemmesh",
       "label": "createItemMesh()",
       "_callable": true,
@@ -2040,6 +2004,42 @@
       "norm_label": "createitemmesh()",
       "source_file": "src/components/world/items/createItemMesh.ts",
       "source_location": "L26"
+    },
+    {
+      "id": "src_components_world_items_createitemmesh_disposeitemmesh",
+      "label": "disposeItemMesh()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": "disposeitemmesh()",
+      "source_file": "src/components/world/items/createItemMesh.ts",
+      "source_location": "L198"
+    },
+    {
+      "id": "src_components_world_items_mapiteminstance_mapiteminstance_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/components/world/items/MapItemInstance.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_components_world_items_mapiteminstance_mapiteminstance_setupplacementmode",
+      "label": ".setupPlacementMode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "createItemMesh.ts",
+      "file_type": "code",
+      "norm_label": ".setupplacementmode()",
+      "source_file": "src/components/world/items/MapItemInstance.ts",
+      "source_location": "L72"
     },
     {
       "id": "src_components_world_items_models_bananapeel3d_createbananapeel3d",
@@ -2483,7 +2483,7 @@
       "file_type": "code",
       "norm_label": "createsocietyscene()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L153"
+      "source_location": "L217"
     },
     {
       "id": "src_components_world_societyscene_createsocietyscene_animate",
@@ -2495,7 +2495,7 @@
       "file_type": "code",
       "norm_label": "animate()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L660"
+      "source_location": "L748"
     },
     {
       "id": "src_components_world_societyscene_createsocietyscene_animatetruckarrival",
@@ -2507,7 +2507,7 @@
       "file_type": "code",
       "norm_label": "animatetruckarrival()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L692"
+      "source_location": "L780"
     },
     {
       "id": "src_components_world_societyscene_createsocietyscene_triggerbinanimation",
@@ -2519,19 +2519,19 @@
       "file_type": "code",
       "norm_label": "triggerbinanimation()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L679"
+      "source_location": "L767"
     },
     {
-      "id": "src_components_world_societyscene_makebinlabeltexture",
-      "label": "makeBinLabelTexture()",
+      "id": "src_components_world_societyscene_makebinicontexture",
+      "label": "makeBinIconTexture()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "WorldCanvas.tsx",
       "file_type": "code",
-      "norm_label": "makebinlabeltexture()",
+      "norm_label": "makebinicontexture()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L63"
+      "source_location": "L55"
     },
     {
       "id": "src_components_world_societyscene_makeconcretetex",
@@ -2543,7 +2543,7 @@
       "file_type": "code",
       "norm_label": "makeconcretetex()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L97"
+      "source_location": "L161"
     },
     {
       "id": "src_components_world_societyscene_makewalltex",
@@ -2555,7 +2555,7 @@
       "file_type": "code",
       "norm_label": "makewalltex()",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L123"
+      "source_location": "L187"
     },
     {
       "id": "src_components_world_thirdpersoncamera_createthirdpersoncamera",
@@ -2579,7 +2579,7 @@
       "file_type": "code",
       "norm_label": "calculatecamerapitchfordistance()",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L26"
+      "source_location": "L28"
     },
     {
       "id": "tests_locomotion_test_calculatecamerarelativedirection",
@@ -2603,7 +2603,7 @@
       "file_type": "code",
       "norm_label": "clampcameradistance()",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L22"
+      "source_location": "L24"
     },
     {
       "id": "tests_locomotion_test_isarrivedatdestination",
@@ -2615,7 +2615,7 @@
       "file_type": "code",
       "norm_label": "isarrivedatdestination()",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L38"
+      "source_location": "L40"
     },
     {
       "id": "tests_locomotion_test_resolveboxcollision",
@@ -2627,128 +2627,7 @@
       "file_type": "code",
       "norm_label": "resolveboxcollision()",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L47"
-    },
-    {
-      "id": "src_components_game_cleanlinessmeter",
-      "label": "CleanlinessMeter.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "cleanlinessmeter.tsx",
-      "source_file": "src/components/game/CleanlinessMeter.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_countdowntimer",
-      "label": "CountdownTimer.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "countdowntimer.tsx",
-      "source_file": "src/components/game/CountdownTimer.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_ecopediamodal",
-      "label": "EcopediaModal.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "ecopediamodal.tsx",
-      "source_file": "src/components/game/EcopediaModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_energymeterhud",
-      "label": "EnergyMeterHUD.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "energymeterhud.tsx",
-      "source_file": "src/components/game/EnergyMeterHUD.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_levelendmodal",
-      "label": "LevelEndModal.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "levelendmodal.tsx",
-      "source_file": "src/components/game/LevelEndModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_mascotdialogue",
-      "label": "MascotDialogue.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "mascotdialogue.tsx",
-      "source_file": "src/components/game/MascotDialogue.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_quizmodal",
-      "label": "QuizModal.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "quizmodal.tsx",
-      "source_file": "src/components/game/QuizModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_services_audio",
-      "label": "audio.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "audio.ts",
-      "source_file": "src/services/audio.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_services_audio_audio",
-      "label": "audio",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "code",
-      "norm_label": "audio",
-      "source_file": "src/services/audio.ts",
-      "source_location": "L334"
-    },
-    {
-      "id": "ref_lucide_react",
-      "label": "lucide-react",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "concept",
-      "norm_label": "lucide-react",
-      "source_file": "package.json",
-      "source_location": "L19"
-    },
-    {
-      "id": "ref_react",
-      "label": "react",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "react",
-      "file_type": "concept",
-      "norm_label": "react",
-      "source_file": "package.json",
-      "source_location": "L20"
+      "source_location": "L49"
     },
     {
       "id": "backend_handlers_ask_eco",
@@ -3057,100 +2936,6 @@
       "norm_label": "@aws-sdk/lib-dynamodb",
       "source_file": "backend/package.json",
       "source_location": "L8"
-    },
-    {
-      "id": "src_services_spawner",
-      "label": "spawner.ts",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "spawner.ts",
-      "source_file": "src/services/spawner.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "tests_spawner_test",
-      "label": "spawner.test.ts",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "code",
-      "norm_label": "spawner.test.ts",
-      "source_file": "tests/spawner.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "level1_waste_detective_plan_1_1_add_residual_bin_type",
-      "label": "1.1 Add `residual` bin type",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1.1 add `residual` bin type",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L108"
-    },
-    {
-      "id": "level1_waste_detective_plan_1_2_create_society_scene",
-      "label": "1.2 Create Society Scene",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1.2 create society scene",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L115"
-    },
-    {
-      "id": "level1_waste_detective_plan_1_3_litter_scatter_system",
-      "label": "1.3 Litter Scatter System",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1.3 litter scatter system",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L177"
-    },
-    {
-      "id": "level1_waste_detective_plan_1_4_pick_up_mechanic",
-      "label": "1.4 Pick-up Mechanic",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1.4 pick-up mechanic",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L210"
-    },
-    {
-      "id": "level1_waste_detective_plan_1_5_update_level_1_config",
-      "label": "1.5 Update Level 1 Config",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "1.5 update level 1 config",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L222"
-    },
-    {
-      "id": "level1_waste_detective_plan_phase_1_scene_and_core_sort_days_1_2_p0",
-      "label": "Phase 1 \u2014 Scene and Core Sort (Days 1\u20132) `P0`",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "BinType",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 1 \u2014 scene and core sort (days 1\u20132) `p0`",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L106"
     },
     {
       "id": "tsconfig_node",
@@ -3792,6 +3577,66 @@
       "source_location": "L1"
     },
     {
+      "id": "level1_waste_detective_plan_1_1_add_residual_bin_type",
+      "label": "1.1 Add `residual` bin type",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1.1 add `residual` bin type",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "level1_waste_detective_plan_1_2_create_society_scene",
+      "label": "1.2 Create Society Scene",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1.2 create society scene",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "level1_waste_detective_plan_1_3_litter_scatter_system",
+      "label": "1.3 Litter Scatter System",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1.3 litter scatter system",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "level1_waste_detective_plan_1_4_pick_up_mechanic",
+      "label": "1.4 Pick-up Mechanic",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1.4 pick-up mechanic",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L210"
+    },
+    {
+      "id": "level1_waste_detective_plan_1_5_update_level_1_config",
+      "label": "1.5 Update Level 1 Config",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1.5 update level 1 config",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L222"
+    },
+    {
       "id": "level1_waste_detective_plan_1_current_state_analysis",
       "label": "1. Current State Analysis",
       "_origin": "ast",
@@ -3802,6 +3647,18 @@
       "norm_label": "1. current state analysis",
       "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
       "source_location": "L8"
+    },
+    {
+      "id": "level1_waste_detective_plan_2_1_countdown_timer",
+      "label": "2.1 Countdown Timer",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2.1 countdown timer",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L244"
     },
     {
       "id": "level1_waste_detective_plan_2_1_scene_strategy",
@@ -3828,6 +3685,18 @@
       "source_location": "L71"
     },
     {
+      "id": "level1_waste_detective_plan_2_2_garbage_truck_animation",
+      "label": "2.2 Garbage Truck Animation",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2.2 garbage truck animation",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L263"
+    },
+    {
       "id": "level1_waste_detective_plan_2_3_game_flow_state_machine",
       "label": "2.3 Game Flow State Machine",
       "_origin": "ast",
@@ -3838,6 +3707,18 @@
       "norm_label": "2.3 game flow state machine",
       "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
       "source_location": "L85"
+    },
+    {
+      "id": "level1_waste_detective_plan_2_3_wrong_bin_feedback_enhancement",
+      "label": "2.3 Wrong-Bin Feedback Enhancement",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2.3 wrong-bin feedback enhancement",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L282"
     },
     {
       "id": "level1_waste_detective_plan_2_architecture_decisions",
@@ -3852,6 +3733,78 @@
       "source_location": "L51"
     },
     {
+      "id": "level1_waste_detective_plan_3_1_eco_lens_system",
+      "label": "3.1 Eco Lens System",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3.1 eco lens system",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L299"
+    },
+    {
+      "id": "level1_waste_detective_plan_3_2_eco_lens_visual_effect",
+      "label": "3.2 Eco Lens Visual Effect",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3.2 eco lens visual effect",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L316"
+    },
+    {
+      "id": "level1_waste_detective_plan_3_3_eco_lens_hud_button",
+      "label": "3.3 Eco Lens HUD Button",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3.3 eco lens hud button",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L335"
+    },
+    {
+      "id": "level1_waste_detective_plan_3_implementation_phases",
+      "label": "3. Implementation Phases",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3. implementation phases",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "level1_waste_detective_plan_4_1_mission_results_screen",
+      "label": "4.1 Mission Results Screen",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.1 mission results screen",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L353"
+    },
+    {
+      "id": "level1_waste_detective_plan_4_2_cleanliness_meter",
+      "label": "4.2 Cleanliness Meter",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4.2 cleanliness meter",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L387"
+    },
+    {
       "id": "level1_waste_detective_plan_4_file_change_summary",
       "label": "4. File Change Summary",
       "_origin": "ast",
@@ -3862,6 +3815,66 @@
       "norm_label": "4. file change summary",
       "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
       "source_location": "L465"
+    },
+    {
+      "id": "level1_waste_detective_plan_5_1_combo_streak_visual",
+      "label": "5.1 Combo Streak Visual",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5.1 combo streak visual",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L416"
+    },
+    {
+      "id": "level1_waste_detective_plan_5_2_hidden_litter_discovery",
+      "label": "5.2 Hidden Litter Discovery",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5.2 hidden litter discovery",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L423"
+    },
+    {
+      "id": "level1_waste_detective_plan_5_3_ambiguous_items",
+      "label": "5.3 Ambiguous Items",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5.3 ambiguous items",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L429"
+    },
+    {
+      "id": "level1_waste_detective_plan_5_4_waste_knowledge_cards",
+      "label": "5.4 Waste Knowledge Cards",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5.4 waste knowledge cards",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L449"
+    },
+    {
+      "id": "level1_waste_detective_plan_5_5_replay_challenge",
+      "label": "5.5 Replay Challenge",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5.5 replay challenge",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L455"
     },
     {
       "id": "level1_waste_detective_plan_5_implementation_order",
@@ -3958,6 +3971,66 @@
       "norm_label": "new files (11)",
       "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
       "source_location": "L467"
+    },
+    {
+      "id": "level1_waste_detective_plan_phase_1_scene_and_core_sort_days_1_2_p0",
+      "label": "Phase 1 \u2014 Scene and Core Sort (Days 1\u20132) `P0`",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 1 \u2014 scene and core sort (days 1\u20132) `p0`",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "level1_waste_detective_plan_phase_2_timer_truck_and_feedback_day_3_p0_p1",
+      "label": "Phase 2 \u2014 Timer, Truck and Feedback (Day 3) `P0/P1`",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 2 \u2014 timer, truck and feedback (day 3) `p0/p1`",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L242"
+    },
+    {
+      "id": "level1_waste_detective_plan_phase_3_eco_lens_day_4_p1",
+      "label": "Phase 3 \u2014 Eco Lens (Day 4) `P1`",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 3 \u2014 eco lens (day 4) `p1`",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L297"
+    },
+    {
+      "id": "level1_waste_detective_plan_phase_4_results_and_polish_day_5_p1",
+      "label": "Phase 4 \u2014 Results and Polish (Day 5) `P1`",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 4 \u2014 results and polish (day 5) `p1`",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L351"
+    },
+    {
+      "id": "level1_waste_detective_plan_phase_5_engagement_features_day_6_p2",
+      "label": "Phase 5 \u2014 Engagement Features (Day 6) `P2`",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "Level 1: Waste Detective \u2014 Implementation Plan",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "phase 5 \u2014 engagement features (day 6) `p2`",
+      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
+      "source_location": "L414"
     },
     {
       "id": "level1_waste_detective_plan_three_js_performance",
@@ -4976,204 +5049,6 @@
       "source_location": "L21"
     },
     {
-      "id": "src_components_game_levelselectmodal",
-      "label": "LevelSelectModal.tsx",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "levelselectmodal.tsx",
-      "source_file": "src/components/game/LevelSelectModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_threescene",
-      "label": "ThreeScene.tsx",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "threescene.tsx",
-      "source_file": "src/components/game/ThreeScene.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_items_mapitemcard",
-      "label": "MapItemCard.tsx",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "mapitemcard.tsx",
-      "source_file": "src/components/items/MapItemCard.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_items_mapitemgallerymodal",
-      "label": "MapItemGalleryModal.tsx",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "mapitemgallerymodal.tsx",
-      "source_file": "src/components/items/MapItemGalleryModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_data_bins",
-      "label": "bins.ts",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "bins.ts",
-      "source_file": "src/data/bins.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_data_bins_all_bins",
-      "label": "ALL_BINS",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "all_bins",
-      "source_file": "src/data/bins.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_data_levels",
-      "label": "levels.ts",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "levels.ts",
-      "source_file": "src/data/levels.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_data_levels_game_levels",
-      "label": "GAME_LEVELS",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "game_levels",
-      "source_file": "src/data/levels.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_types_game",
-      "label": "game.ts",
-      "_origin": "ast",
-      "community": 38,
-      "community_name": "game.ts",
-      "file_type": "code",
-      "norm_label": "game.ts",
-      "source_file": "src/types/game.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_teacher_teacherdashboard",
-      "label": "TeacherDashboard.tsx",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "teacherdashboard.tsx",
-      "source_file": "src/components/teacher/TeacherDashboard.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_data_items",
-      "label": "items.ts",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "items.ts",
-      "source_file": "src/data/items.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_data_items_game_items",
-      "label": "GAME_ITEMS",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "game_items",
-      "source_file": "src/data/items.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_data_quizzes",
-      "label": "quizzes.ts",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "quizzes.ts",
-      "source_file": "src/data/quizzes.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_data_quizzes_level_quizzes",
-      "label": "LEVEL_QUIZZES",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "level_quizzes",
-      "source_file": "src/data/quizzes.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_services_api",
-      "label": "api.ts",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "api.ts",
-      "source_file": "src/services/api.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_services_api_apiservice",
-      "label": "apiService",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "apiservice",
-      "source_file": "src/services/api.ts",
-      "source_location": "L17"
-    },
-    {
-      "id": "tests_api_test",
-      "label": "api.test.ts",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "api.test.ts",
-      "source_file": "tests/api.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "tests_ste_compliance_test",
-      "label": "ste-compliance.test.ts",
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "TeacherDashboard.tsx",
-      "file_type": "code",
-      "norm_label": "ste-compliance.test.ts",
-      "source_file": "tests/ste-compliance.test.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "tsconfig",
       "label": "tsconfig.json",
       "_origin": "ast",
@@ -5383,6 +5258,50 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_game_avatarselectmodal",
+      "label": "AvatarSelectModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "avatarselectmodal.tsx",
+      "source_file": "src/components/game/AvatarSelectModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_avatarselectmodal_avatars",
+      "label": "AVATARS",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "avatars",
+      "source_file": "src/components/game/AvatarSelectModal.tsx",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_components_game_cleanlinessmeter",
+      "label": "CleanlinessMeter.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "cleanlinessmeter.tsx",
+      "source_file": "src/components/game/CleanlinessMeter.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_countdowntimer",
+      "label": "CountdownTimer.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "countdowntimer.tsx",
+      "source_file": "src/components/game/CountdownTimer.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_game_ecolensoverlay",
       "label": "EcoLensOverlay.tsx",
       "_origin": "ast",
@@ -5391,6 +5310,17 @@
       "file_type": "code",
       "norm_label": "ecolensoverlay.tsx",
       "source_file": "src/components/game/EcoLensOverlay.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_ecopediamodal",
+      "label": "EcopediaModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "ecopediamodal.tsx",
+      "source_file": "src/components/game/EcopediaModal.tsx",
       "source_location": "L1"
     },
     {
@@ -5405,6 +5335,127 @@
       "source_location": "L1"
     },
     {
+      "id": "src_components_game_energymeterhud",
+      "label": "EnergyMeterHUD.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "energymeterhud.tsx",
+      "source_file": "src/components/game/EnergyMeterHUD.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_levelendmodal",
+      "label": "LevelEndModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "levelendmodal.tsx",
+      "source_file": "src/components/game/LevelEndModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_levelselectmodal",
+      "label": "LevelSelectModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "levelselectmodal.tsx",
+      "source_file": "src/components/game/LevelSelectModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_mascotdialogue",
+      "label": "MascotDialogue.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mascotdialogue.tsx",
+      "source_file": "src/components/game/MascotDialogue.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal",
+      "label": "MissionResultsModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "missionresultsmodal.tsx",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_missionresultsmodal_rating_config",
+      "label": "RATING_CONFIG",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "rating_config",
+      "source_file": "src/components/game/MissionResultsModal.tsx",
+      "source_location": "L35"
+    },
+    {
+      "id": "src_components_game_quizmodal",
+      "label": "QuizModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "quizmodal.tsx",
+      "source_file": "src/components/game/QuizModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_game_threescene",
+      "label": "ThreeScene.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "threescene.tsx",
+      "source_file": "src/components/game/ThreeScene.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_items_mapitemcard",
+      "label": "MapItemCard.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mapitemcard.tsx",
+      "source_file": "src/components/items/MapItemCard.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_items_mapitemgallerymodal",
+      "label": "MapItemGalleryModal.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "mapitemgallerymodal.tsx",
+      "source_file": "src/components/items/MapItemGalleryModal.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_teacher_teacherdashboard",
+      "label": "TeacherDashboard.tsx",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "teacherdashboard.tsx",
+      "source_file": "src/components/teacher/TeacherDashboard.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_world_worldpage",
       "label": "WorldPage.tsx",
       "_origin": "ast",
@@ -5416,6 +5467,94 @@
       "source_location": "L1"
     },
     {
+      "id": "src_data_bins",
+      "label": "bins.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "bins.ts",
+      "source_file": "src/data/bins.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_data_bins_all_bins",
+      "label": "ALL_BINS",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "all_bins",
+      "source_file": "src/data/bins.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_data_items",
+      "label": "items.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "items.ts",
+      "source_file": "src/data/items.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_data_items_game_items",
+      "label": "GAME_ITEMS",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "game_items",
+      "source_file": "src/data/items.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_data_levels",
+      "label": "levels.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "levels.ts",
+      "source_file": "src/data/levels.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_data_levels_game_levels",
+      "label": "GAME_LEVELS",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "game_levels",
+      "source_file": "src/data/levels.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_data_quizzes",
+      "label": "quizzes.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "quizzes.ts",
+      "source_file": "src/data/quizzes.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_data_quizzes_level_quizzes",
+      "label": "LEVEL_QUIZZES",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "level_quizzes",
+      "source_file": "src/data/quizzes.ts",
+      "source_location": "L6"
+    },
+    {
       "id": "src_hooks_usecountdowntimer",
       "label": "useCountdownTimer.ts",
       "_origin": "ast",
@@ -5424,6 +5563,61 @@
       "file_type": "code",
       "norm_label": "usecountdowntimer.ts",
       "source_file": "src/hooks/useCountdownTimer.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_api",
+      "label": "api.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "api.ts",
+      "source_file": "src/services/api.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_api_apiservice",
+      "label": "apiService",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "apiservice",
+      "source_file": "src/services/api.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_services_audio",
+      "label": "audio.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "audio.ts",
+      "source_file": "src/services/audio.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_audio_audio",
+      "label": "audio",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "audio",
+      "source_file": "src/services/audio.ts",
+      "source_location": "L334"
+    },
+    {
+      "id": "src_services_spawner",
+      "label": "spawner.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "spawner.ts",
+      "source_file": "src/services/spawner.ts",
       "source_location": "L1"
     },
     {
@@ -5449,6 +5643,50 @@
       "source_location": "L14"
     },
     {
+      "id": "src_types_game",
+      "label": "game.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "game.ts",
+      "source_file": "src/types/game.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_api_test",
+      "label": "api.test.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "api.test.ts",
+      "source_file": "tests/api.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_spawner_test",
+      "label": "spawner.test.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "spawner.test.ts",
+      "source_file": "tests/spawner.test.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_ste_compliance_test",
+      "label": "ste-compliance.test.ts",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "code",
+      "norm_label": "ste-compliance.test.ts",
+      "source_file": "tests/ste-compliance.test.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "tests_worldpage_test",
       "label": "worldPage.test.ts",
       "_origin": "ast",
@@ -5460,156 +5698,26 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_game_missionresultsmodal",
-      "label": "MissionResultsModal.tsx",
+      "id": "ref_lucide_react",
+      "label": "lucide-react",
       "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
-      "file_type": "code",
-      "norm_label": "missionresultsmodal.tsx",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L1"
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "concept",
+      "norm_label": "lucide-react",
+      "source_file": "package.json",
+      "source_location": "L19"
     },
     {
-      "id": "src_components_game_missionresultsmodal_rating_config",
-      "label": "RATING_CONFIG",
+      "id": "ref_react",
+      "label": "react",
       "_origin": "ast",
-      "community": 42,
-      "community_name": "MissionResultsModal.tsx",
-      "file_type": "code",
-      "norm_label": "rating_config",
-      "source_file": "src/components/game/MissionResultsModal.tsx",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_components_game_avatarselectmodal",
-      "label": "AvatarSelectModal.tsx",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "AvatarSelectModal.tsx",
-      "file_type": "code",
-      "norm_label": "avatarselectmodal.tsx",
-      "source_file": "src/components/game/AvatarSelectModal.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_game_avatarselectmodal_avatars",
-      "label": "AVATARS",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "AvatarSelectModal.tsx",
-      "file_type": "code",
-      "norm_label": "avatars",
-      "source_file": "src/components/game/AvatarSelectModal.tsx",
-      "source_location": "L11"
-    },
-    {
-      "id": "level1_waste_detective_plan_2_1_countdown_timer",
-      "label": "2.1 Countdown Timer",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "2.1 countdown timer",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L244"
-    },
-    {
-      "id": "level1_waste_detective_plan_2_2_garbage_truck_animation",
-      "label": "2.2 Garbage Truck Animation",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "2.2 garbage truck animation",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L263"
-    },
-    {
-      "id": "level1_waste_detective_plan_2_3_wrong_bin_feedback_enhancement",
-      "label": "2.3 Wrong-Bin Feedback Enhancement",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "2.3 wrong-bin feedback enhancement",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L282"
-    },
-    {
-      "id": "level1_waste_detective_plan_3_1_eco_lens_system",
-      "label": "3.1 Eco Lens System",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3.1 eco lens system",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L299"
-    },
-    {
-      "id": "level1_waste_detective_plan_3_2_eco_lens_visual_effect",
-      "label": "3.2 Eco Lens Visual Effect",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3.2 eco lens visual effect",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L316"
-    },
-    {
-      "id": "level1_waste_detective_plan_3_3_eco_lens_hud_button",
-      "label": "3.3 Eco Lens HUD Button",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3.3 eco lens hud button",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L335"
-    },
-    {
-      "id": "level1_waste_detective_plan_3_implementation_phases",
-      "label": "3. Implementation Phases",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "3. implementation phases",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L104"
-    },
-    {
-      "id": "level1_waste_detective_plan_4_1_mission_results_screen",
-      "label": "4.1 Mission Results Screen",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "4.1 mission results screen",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L353"
-    },
-    {
-      "id": "level1_waste_detective_plan_4_2_cleanliness_meter",
-      "label": "4.2 Cleanliness Meter",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "4.2 cleanliness meter",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L387"
+      "community": 41,
+      "community_name": "WorldPage.tsx",
+      "file_type": "concept",
+      "norm_label": "react",
+      "source_file": "package.json",
+      "source_location": "L20"
     },
     {
       "id": "level1_waste_detective_plan_4_3_audio_and_sound_effects",
@@ -5622,114 +5730,6 @@
       "norm_label": "4.3 audio and sound effects",
       "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
       "source_location": "L396"
-    },
-    {
-      "id": "level1_waste_detective_plan_5_1_combo_streak_visual",
-      "label": "5.1 Combo Streak Visual",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5.1 combo streak visual",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L416"
-    },
-    {
-      "id": "level1_waste_detective_plan_5_2_hidden_litter_discovery",
-      "label": "5.2 Hidden Litter Discovery",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5.2 hidden litter discovery",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L423"
-    },
-    {
-      "id": "level1_waste_detective_plan_5_3_ambiguous_items",
-      "label": "5.3 Ambiguous Items",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5.3 ambiguous items",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L429"
-    },
-    {
-      "id": "level1_waste_detective_plan_5_4_waste_knowledge_cards",
-      "label": "5.4 Waste Knowledge Cards",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5.4 waste knowledge cards",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L449"
-    },
-    {
-      "id": "level1_waste_detective_plan_5_5_replay_challenge",
-      "label": "5.5 Replay Challenge",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "5.5 replay challenge",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L455"
-    },
-    {
-      "id": "level1_waste_detective_plan_phase_2_timer_truck_and_feedback_day_3_p0_p1",
-      "label": "Phase 2 \u2014 Timer, Truck and Feedback (Day 3) `P0/P1`",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 2 \u2014 timer, truck and feedback (day 3) `p0/p1`",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L242"
-    },
-    {
-      "id": "level1_waste_detective_plan_phase_3_eco_lens_day_4_p1",
-      "label": "Phase 3 \u2014 Eco Lens (Day 4) `P1`",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 3 \u2014 eco lens (day 4) `p1`",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L297"
-    },
-    {
-      "id": "level1_waste_detective_plan_phase_4_results_and_polish_day_5_p1",
-      "label": "Phase 4 \u2014 Results and Polish (Day 5) `P1`",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 4 \u2014 results and polish (day 5) `p1`",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L351"
-    },
-    {
-      "id": "level1_waste_detective_plan_phase_5_engagement_features_day_6_p2",
-      "label": "Phase 5 \u2014 Engagement Features (Day 6) `P2`",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "AudioService",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 5 \u2014 engagement features (day 6) `p2`",
-      "source_file": "LEVEL1_WASTE_DETECTIVE_PLAN.md",
-      "source_location": "L414"
     },
     {
       "id": "ndarray",
@@ -6202,18 +6202,7 @@
       "file_type": "code",
       "norm_label": "bin_colors",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L38"
-    },
-    {
-      "id": "src_components_world_societyscene_bin_labels",
-      "label": "BIN_LABELS",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "WorldCanvas.tsx",
-      "file_type": "code",
-      "norm_label": "bin_labels",
-      "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L49"
+      "source_location": "L40"
     },
     {
       "id": "src_components_world_thirdpersoncamera",
@@ -7755,7 +7744,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L189",
+      "source_location": "L253",
       "weight": 1.0
     },
     {
@@ -7767,19 +7756,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L222",
+      "source_location": "L286",
       "weight": 1.0
     },
     {
       "source": "src_components_world_societyscene_createsocietyscene",
-      "target": "src_components_world_societyscene_makebinlabeltexture",
+      "target": "src_components_world_societyscene_makebinicontexture",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L429",
+      "source_location": "L486",
       "weight": 1.0
     },
     {
@@ -8283,7 +8272,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -8307,7 +8296,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L22",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -8319,7 +8308,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L26",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -8331,7 +8320,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -8343,7 +8332,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/locomotion.test.ts",
-      "source_location": "L47",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -8799,7 +8788,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -8811,7 +8800,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L31",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -10479,7 +10468,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -10491,7 +10480,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -13779,7 +13768,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -13791,7 +13780,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -13803,7 +13792,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -18174,24 +18163,24 @@
     },
     {
       "source": "src_components_world_societyscene",
+      "target": "src_components_world_societyscene_makeconcretetex",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/world/societyScene.ts",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_world_societyscene",
       "target": "src_components_world_societyscene_makewalltex",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L123",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_world_societyscene",
-      "target": "src_components_world_societyscene_createsocietyscene",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L153",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -18202,7 +18191,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L19",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_world_societyscene",
+      "target": "src_components_world_societyscene_createsocietyscene",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/world/societyScene.ts",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -18213,40 +18213,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L38",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
       "source": "src_components_world_societyscene",
-      "target": "src_components_world_societyscene_bin_labels",
+      "target": "src_components_world_societyscene_makebinicontexture",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L49",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_world_societyscene",
-      "target": "src_components_world_societyscene_makebinlabeltexture",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L63",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_world_societyscene",
-      "target": "src_components_world_societyscene_makeconcretetex",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L97",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -19795,7 +19773,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L729",
+      "source_location": "L817",
       "weight": 1.0
     },
     {
@@ -19807,7 +19785,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L730",
+      "source_location": "L818",
       "weight": 1.0
     },
     {
@@ -19819,7 +19797,7 @@
       "confidence_score": 0.85,
       "context": "collection",
       "source_file": "src/components/world/societyScene.ts",
-      "source_location": "L731",
+      "source_location": "L819",
       "weight": 1.0
     },
     {
@@ -20113,5 +20091,5 @@
       "source_file": "AGENTS.md"
     }
   ],
-  "built_at_commit": "09e8a5365ed9ec303d144964d477e755bf2af0c0"
+  "built_at_commit": "2a3cd597adf477807410ea4b37fa7cf233ec5b2c"
 }

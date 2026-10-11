@@ -11,15 +11,14 @@ export interface PlayerCharacter {
 }
 
 /**
- * Creates an expressive 3D anime-styled Kai character model
- * matching the official hero model sheet (hero-model-sheet.png):
- * - Golden yellow hoodie with front kangaroo pocket, white drawstrings, and folded hood
- * - Olive green backpack with eco-leaf badge and leather buckle straps
- * - Tousled brown anime hair with spiky bangs and tufts
- * - Expressive anime eyes, smile, and blushing cheeks
- * - Blue denim shorts with cuffed hems
+ * Creates a simple flat-color Kai character model:
+ * - Golden yellow hoodie with folded hood
+ * - Olive green backpack with plain flap
+ * - Brown hair with bangs and side locks
+ * - Plain peach face with no painted features
+ * - Blue denim shorts with rolled cuffs
  * - White athletic ankle socks
- * - Blue and white sneakers with yellow accents
+ * - Blue and white sneakers
  */
 export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   const group = new THREE.Group();
@@ -31,123 +30,12 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   group.add(bodyRoot);
 
   // -------------------------------------------------------------------------
-  // 1. PROCEDURAL FACE TEXTURE (Sparkling anime eyes, blush, and smile)
-  // -------------------------------------------------------------------------
-  const faceCanvas = document.createElement('canvas');
-  faceCanvas.width = 256;
-  faceCanvas.height = 256;
-  const ctx = faceCanvas.getContext('2d');
-
-  if (ctx) {
-    // Soft peachy skin background
-    ctx.fillStyle = '#fde2c7';
-    ctx.fillRect(0, 0, 256, 256);
-
-    // Cheerful rosy blush on cheeks
-    ctx.fillStyle = 'rgba(244, 114, 182, 0.45)';
-    ctx.beginPath();
-    ctx.ellipse(56, 155, 28, 14, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(200, 155, 28, 14, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Eyebrows
-    ctx.strokeStyle = '#451a03';
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(50, 72);
-    ctx.quadraticCurveTo(80, 62, 105, 78);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(206, 72);
-    ctx.quadraticCurveTo(176, 62, 151, 78);
-    ctx.stroke();
-
-    // Large Anime Eyes - Outer Sclera (White)
-    const drawEye = (centerX: number, centerY: number, isLeft: boolean) => {
-      ctx.save();
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, 32, 42, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Iris (Warm Chocolate Brown gradient)
-      const grad = ctx.createLinearGradient(centerX, centerY - 35, centerX, centerY + 35);
-      grad.addColorStop(0, '#381606');
-      grad.addColorStop(0.5, '#78350f');
-      grad.addColorStop(1, '#b45309');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.ellipse(centerX + (isLeft ? 4 : -4), centerY + 2, 24, 34, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Pupil (Deep dark)
-      ctx.fillStyle = '#1c0a03';
-      ctx.beginPath();
-      ctx.arc(centerX + (isLeft ? 4 : -4), centerY + 4, 12, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Sparkling Primary Highlight
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(centerX + (isLeft ? -4 : -8), centerY - 14, 9, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Secondary Small Highlight
-      ctx.beginPath();
-      ctx.arc(centerX + (isLeft ? 10 : 4), centerY + 12, 4.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Eyelash contour
-      ctx.strokeStyle = '#1e0c03';
-      ctx.lineWidth = 5.5;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY - 6, 30, Math.PI * 1.15, Math.PI * 1.85);
-      ctx.stroke();
-
-      ctx.restore();
-    };
-
-    drawEye(78, 116, true);
-    drawEye(178, 116, false);
-
-    // Anime Smile
-    ctx.strokeStyle = '#381606';
-    ctx.fillStyle = '#be185d';
-    ctx.lineWidth = 4.5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(102, 185);
-    ctx.quadraticCurveTo(128, 212, 154, 185);
-    ctx.stroke();
-
-    // Cute tongue inside smile
-    ctx.beginPath();
-    ctx.moveTo(110, 188);
-    ctx.quadraticCurveTo(128, 206, 146, 188);
-    ctx.closePath();
-    ctx.fillStyle = '#f43f5e';
-    ctx.fill();
-  }
-
-  const faceTexture = new THREE.CanvasTexture(faceCanvas);
-  faceTexture.colorSpace = THREE.SRGBColorSpace;
-
-  // -------------------------------------------------------------------------
-  // 2. MATERIALS
+  // 1. MATERIALS (Flat colors only. The face stays plain.)
   // -------------------------------------------------------------------------
   const skinMat = new THREE.MeshStandardMaterial({
     color: 0xfde2c7,
     roughness: 0.55,
     metalness: 0.0,
-  });
-
-  const faceMat = new THREE.MeshStandardMaterial({
-    map: faceTexture,
-    roughness: 0.55,
   });
 
   const hoodieMat = new THREE.MeshStandardMaterial({
@@ -156,7 +44,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
     metalness: 0.05,
   });
 
-  const hoodiePocketMat = new THREE.MeshStandardMaterial({
+  const hoodieTrimMat = new THREE.MeshStandardMaterial({
     color: 0xeab308,
     roughness: 0.7,
   });
@@ -164,11 +52,6 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   const whiteUndershirtMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     roughness: 0.6,
-  });
-
-  const drawstringMat = new THREE.MeshStandardMaterial({
-    color: 0xf8fafc,
-    roughness: 0.5,
   });
 
   const hairMat = new THREE.MeshStandardMaterial({
@@ -179,24 +62,6 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   const backpackMat = new THREE.MeshStandardMaterial({
     color: 0x3f6212, // rich olive green
     roughness: 0.75,
-  });
-
-  const leafMat = new THREE.MeshStandardMaterial({
-    color: 0x4ade80, // vibrant eco leaf
-    roughness: 0.4,
-    emissive: 0x15803d,
-    emissiveIntensity: 0.25,
-  });
-
-  const leatherMat = new THREE.MeshStandardMaterial({
-    color: 0x78350f, // brown leather buckles
-    roughness: 0.5,
-  });
-
-  const brassMat = new THREE.MeshStandardMaterial({
-    color: 0xfacc15,
-    metalness: 0.6,
-    roughness: 0.3,
   });
 
   const denimMat = new THREE.MeshStandardMaterial({
@@ -224,13 +89,8 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
     roughness: 0.35,
   });
 
-  const sneakerYellowMat = new THREE.MeshStandardMaterial({
-    color: 0xfbbf24,
-    roughness: 0.4,
-  });
-
   // -------------------------------------------------------------------------
-  // 3. TORSO & HOODIE
+  // 2. TORSO & HOODIE
   // -------------------------------------------------------------------------
   const torsoGroup = new THREE.Group();
   torsoGroup.position.set(0, 1.35, 0);
@@ -251,30 +111,6 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   collar.position.set(0, 0.44, 0.22);
   torsoGroup.add(collar);
 
-  // Kangaroo Pouch Pocket on Front of Hoodie
-  const pocket = new THREE.Mesh(
-    new THREE.BoxGeometry(0.5, 0.3, 0.08),
-    hoodiePocketMat
-  );
-  pocket.position.set(0, -0.16, 0.24);
-  pocket.castShadow = true;
-  torsoGroup.add(pocket);
-
-  // White Hoodie Drawstrings
-  [-0.08, 0.08].forEach((xOffset) => {
-    const string = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.015, 0.015, 0.24, 8),
-      drawstringMat
-    );
-    string.position.set(xOffset, 0.28, 0.24);
-    torsoGroup.add(string);
-
-    // Tip knot
-    const knot = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), brassMat);
-    knot.position.set(xOffset, 0.15, 0.24);
-    torsoGroup.add(knot);
-  });
-
   // Folded Hood Resting on Back of Neck
   const hoodFold = new THREE.Mesh(
     new THREE.BoxGeometry(0.62, 0.22, 0.24),
@@ -285,16 +121,16 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   hoodFold.castShadow = true;
   torsoGroup.add(hoodFold);
 
-  // Ribbed Hem at Waist
+  // Hem Band at Waist
   const waistRib = new THREE.Mesh(
     new THREE.BoxGeometry(0.74, 0.1, 0.48),
-    hoodiePocketMat
+    hoodieTrimMat
   );
   waistRib.position.set(0, -0.44, 0);
   torsoGroup.add(waistRib);
 
   // -------------------------------------------------------------------------
-  // 4. BACKPACK (Olive green with eco-leaf badge & leather straps)
+  // 3. BACKPACK (Plain olive green bag)
   // -------------------------------------------------------------------------
   const backpackGroup = new THREE.Group();
   backpackGroup.position.set(0, 0.02, -0.32);
@@ -316,41 +152,6 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   packFlap.rotation.x = 0.1;
   backpackGroup.add(packFlap);
 
-  // Eco-Leaf Badge on Flap
-  const leafBadge = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.12, 0.12, 0.02, 16),
-    leafMat
-  );
-  leafBadge.rotation.x = Math.PI / 2;
-  leafBadge.position.set(0, 0.14, -0.13);
-  backpackGroup.add(leafBadge);
-
-  // Eco Leaf Emboss on Badge
-  const leafIcon = new THREE.Mesh(
-    new THREE.ConeGeometry(0.06, 0.14, 5),
-    new THREE.MeshBasicMaterial({ color: 0xffffff })
-  );
-  leafIcon.rotation.z = Math.PI / 6;
-  leafIcon.position.set(0, 0.14, -0.145);
-  backpackGroup.add(leafIcon);
-
-  // Leather Straps & Brass Buckles on Flap
-  [-0.15, 0.15].forEach((xOffset) => {
-    const strap = new THREE.Mesh(
-      new THREE.BoxGeometry(0.04, 0.48, 0.02),
-      leatherMat
-    );
-    strap.position.set(xOffset, 0.02, -0.13);
-    backpackGroup.add(strap);
-
-    const buckle = new THREE.Mesh(
-      new THREE.BoxGeometry(0.07, 0.05, 0.03),
-      brassMat
-    );
-    buckle.position.set(xOffset, -0.06, -0.135);
-    backpackGroup.add(buckle);
-  });
-
   // Shoulder Straps over Kai's Shoulders
   [-0.24, 0.24].forEach((xOffset) => {
     const shoulderStrap = new THREE.Mesh(
@@ -364,25 +165,15 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   torsoGroup.add(backpackGroup);
 
   // -------------------------------------------------------------------------
-  // 5. HEAD, ANIME HAIR & EARS
+  // 4. HEAD, HAIR & EARS
   // -------------------------------------------------------------------------
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 2.08, 0);
   bodyRoot.add(headGroup);
 
-  // Head Base Cube (with rounded feel)
+  // Head Base Cube (plain face, no painted features)
   const headGeo = new THREE.BoxGeometry(0.56, 0.54, 0.52);
-
-  // Materials for each side of head: front is faceMat, others skinMat
-  const headMaterials = [
-    skinMat, // right
-    skinMat, // left
-    skinMat, // top
-    skinMat, // bottom
-    faceMat, // front
-    hairMat, // back
-  ];
-  const headMesh = new THREE.Mesh(headGeo, headMaterials);
+  const headMesh = new THREE.Mesh(headGeo, skinMat);
   headMesh.castShadow = true;
   headGroup.add(headMesh);
 
@@ -393,7 +184,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
     headGroup.add(ear);
   });
 
-  // Hair Group (Voluminous layered clumps matching model sheet)
+  // Hair Group (Simple layered clumps)
   const hairGroup = new THREE.Group();
 
   // Top Hair Cap
@@ -414,7 +205,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   hairBack.castShadow = true;
   hairGroup.add(hairBack);
 
-  // Spiky Front Bangs (Anime styling)
+  // Front Bangs
   const bangs = [
     { x: -0.2, y: 0.18, z: 0.28, rotZ: 0.2, sx: 0.14, sy: 0.24 },
     { x: -0.07, y: 0.22, z: 0.29, rotZ: -0.1, sx: 0.16, sy: 0.28 },
@@ -443,26 +234,10 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
     hairGroup.add(lock);
   });
 
-  // Crown Spiky Tufts
-  const tufts = [
-    { x: -0.14, y: 0.38, z: 0.05, rz: 0.3 },
-    { x: 0.05, y: 0.42, z: -0.05, rz: -0.1 },
-    { x: 0.18, y: 0.38, z: 0.05, rz: -0.35 },
-  ];
-  tufts.forEach((t) => {
-    const tuft = new THREE.Mesh(
-      new THREE.ConeGeometry(0.1, 0.26, 4),
-      hairMat
-    );
-    tuft.position.set(t.x, t.y, t.z);
-    tuft.rotation.z = t.rz;
-    hairGroup.add(tuft);
-  });
-
   headGroup.add(hairGroup);
 
   // -------------------------------------------------------------------------
-  // 6. ARMS (Yellow Hoodie Sleeves, Ribbed Cuffs, & Hands)
+  // 5. ARMS (Yellow Hoodie Sleeves, Cuffs, & Hands)
   // -------------------------------------------------------------------------
   const armGeo = new THREE.BoxGeometry(0.22, 0.52, 0.22);
   armGeo.translate(0, -0.26, 0);
@@ -476,10 +251,10 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
     sleeve.castShadow = true;
     shoulderPivot.add(sleeve);
 
-    // Ribbed wrist cuff
+    // Wrist cuff
     const cuff = new THREE.Mesh(
       new THREE.BoxGeometry(0.24, 0.1, 0.24),
-      hoodiePocketMat
+      hoodieTrimMat
     );
     cuff.position.set(0, -0.52, 0);
     shoulderPivot.add(cuff);
@@ -500,7 +275,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   const rightArmPivot = createArm(false);
 
   // -------------------------------------------------------------------------
-  // 7. LEGS (Blue Denim Shorts, White Socks, & Blue/White Sneakers)
+  // 6. LEGS (Blue Denim Shorts, White Socks, & Blue/White Sneakers)
   // -------------------------------------------------------------------------
   const legGeo = new THREE.BoxGeometry(0.24, 0.4, 0.24);
   legGeo.translate(0, -0.2, 0);
@@ -566,14 +341,6 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
     toeCap.position.set(0, -0.03, 0.14);
     sneakerGroup.add(toeCap);
 
-    // Yellow Accent Stripe
-    const yellowStripe = new THREE.Mesh(
-      new THREE.BoxGeometry(0.27, 0.04, 0.12),
-      sneakerYellowMat
-    );
-    yellowStripe.position.set(0, 0.01, -0.08);
-    sneakerGroup.add(yellowStripe);
-
     hipPivot.add(sneakerGroup);
     bodyRoot.add(hipPivot);
     return hipPivot;
@@ -583,7 +350,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   const rightLegPivot = createLeg(false);
 
   // -------------------------------------------------------------------------
-  // 8. GLB MODEL ASSET LOADER (Kai generated from official turnaround photos)
+  // 7. GLB MODEL ASSET LOADER (Flat-color Kai model)
   // -------------------------------------------------------------------------
   let isGlbLoaded = false;
   let gltfBodyRoot: THREE.Object3D | null = null;
@@ -593,7 +360,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   let gltfRightLegPivot: THREE.Object3D | null = null;
   let gltfHeadPivot: THREE.Object3D | null = null;
 
-  // Asynchronously load the photo-textured GLB model
+  // Asynchronously load the flat-color GLB model
   if (typeof window !== 'undefined' && typeof fetch !== 'undefined') {
     try {
       let modelUrl = '/models/kai.glb';
@@ -643,7 +410,7 @@ export function createPlayerCharacter(shirtColor = 0xfacc15): PlayerCharacter {
   }
 
   // -------------------------------------------------------------------------
-  // 9. LOCOMOTION, IDLE BREATHING & CELEBRATION ANIMATIONS
+  // 8. LOCOMOTION, IDLE BREATHING & CELEBRATION ANIMATIONS
   // -------------------------------------------------------------------------
   let animTime = 0;
   let currentAngle = 0;
