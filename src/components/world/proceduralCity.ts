@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { WorldObstacle } from './types';
 import { LEVEL_STATIONS } from './levelStations';
 
+// Warm golden window glow — hoisted so energy updates never allocate a Color
+const WARM_GLOW_COLOR = new THREE.Color(0xfbbf24);
+
 export interface ProceduralCityResult {
   cityGroup: THREE.Group;
   obstacles: WorldObstacle[];
@@ -622,12 +625,11 @@ export function createProceduralCity(): ProceduralCityResult {
   // =========================================================================
   const updateEnergy = (energyLevel: number) => {
     const intensity = Math.min(1.0, Math.max(0, energyLevel / 100));
-    const glowColor = new THREE.Color(0xfbbf24); // warm golden light
 
     // Update window illumination
     windowMaterials.forEach((mat) => {
       if (intensity > 0.1) {
-        mat.emissive.copy(glowColor).multiplyScalar(intensity * 1.2);
+        mat.emissive.copy(WARM_GLOW_COLOR).multiplyScalar(intensity * 1.2);
         mat.emissiveIntensity = intensity * 1.2;
       } else {
         mat.emissive.setHex(0x000000);

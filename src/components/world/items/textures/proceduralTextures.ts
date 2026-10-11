@@ -3,6 +3,18 @@ import * as THREE from 'three';
 // Cache generated textures to conserve GPU memory
 const textureCache = new Map<string, THREE.CanvasTexture>();
 
+/**
+ * Shared procedural textures must survive every mesh disposal — they are
+ * re-used by the next mesh that asks for them. Disposal code calls this to
+ * tell cached textures apart from per-mesh ones.
+ */
+export function isCachedItemTexture(texture: THREE.Texture): boolean {
+  for (const cached of textureCache.values()) {
+    if (cached === texture) return true;
+  }
+  return false;
+}
+
 function getOrCreateCanvas(width: number, height: number): [HTMLCanvasElement, CanvasRenderingContext2D | null] {
   if (typeof document === 'undefined') {
     return [{} as HTMLCanvasElement, null];

@@ -170,29 +170,24 @@ export function createLitterScatter(
 
       const dist = playerPos.distanceTo(item.position);
 
-      // Reveal hidden items on approach
-      if (item.isHidden) {
-        const revealOpacity = dist < 2.0 ? 1.0 : dist < 3.5 ? THREE.MathUtils.lerp(0.15, 1.0, (3.5 - dist) / 1.5) : 0.15;
-        item.mesh.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach((m) => { m.opacity = revealOpacity; });
-            } else {
-              child.material.opacity = revealOpacity;
-            }
-          }
-        });
-      }
-
-      // Glow outline when close enough to pick up
-      const glowColor = dist < 1.5 ? 0xfbbf24 : null;
+      // Single traverse per item per frame: hidden-item reveal and pickup
+      // glow in one walk instead of two (this runs for every item, every frame).
+      const revealOpacity = item.isHidden
+        ? dist < 2.0
+          ? 1.0
+          : dist < 3.5
+            ? THREE.MathUtils.lerp(0.15, 1.0, (3.5 - dist) / 1.5)
+            : 0.15
+        : null;
+      const glowOn = dist < 1.5;
       item.mesh.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           const mats = Array.isArray(child.material) ? child.material : [child.material];
           mats.forEach((m) => {
+            if (revealOpacity !== null) m.opacity = revealOpacity;
             if (m instanceof THREE.MeshStandardMaterial) {
-              m.emissive.setHex(glowColor ?? 0x000000);
-              m.emissiveIntensity = glowColor ? 0.35 + 0.15 * Math.sin(elapsed * 4) : 0;
+              m.emissive.setHex(glowOn ? 0xfbbf24 : 0x000000);
+              m.emissiveIntensity = glowOn ? 0.35 + 0.15 * Math.sin(elapsed * 4) : 0;
             }
           });
         }

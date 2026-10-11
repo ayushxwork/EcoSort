@@ -11,9 +11,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    manualChunks: {
-      three: ['three', 'three/examples/jsm/loaders/GLTFLoader.js'],
-      react: ['react', 'react-dom'],
+    rollupOptions: {
+      output: {
+        // The `build.manualChunks` shorthand is ignored by Vite 6 — declare
+        // the splits under rollupOptions.output so three.js stays out of the
+        // landing bundle and React is cached across lazy routes.
+        manualChunks(id: string) {
+          if (id.includes('node_modules/three')) return 'three';
+          if (id.includes('node_modules/react')) return 'react';
+        },
+      },
     },
   },
 });

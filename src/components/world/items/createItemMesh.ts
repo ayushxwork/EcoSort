@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { disposeObject3D } from '../disposeObject3D';
 import { ItemMeshOptions, MapItemModelType } from './types';
 import { createBananaPeel3D } from './models/BananaPeel3D';
 import { createFoodPlate3D } from './models/FoodPlate3D';
@@ -192,26 +193,9 @@ export function createItemMesh(
 }
 
 /**
- * Recursively disposes all geometries, materials, and textures attached to a mesh group
- * to prevent GPU memory leaks.
+ * Recursively disposes all geometries, materials, and non-cached textures
+ * attached to a mesh group to prevent GPU memory leaks.
  */
 export function disposeItemMesh(group: THREE.Object3D): void {
-  group.traverse((child) => {
-    if (child instanceof THREE.Mesh) {
-      if (child.geometry) {
-        child.geometry.dispose();
-      }
-      if (child.material) {
-        if (Array.isArray(child.material)) {
-          child.material.forEach((mat) => {
-            if (mat.map) mat.map.dispose();
-            mat.dispose();
-          });
-        } else {
-          if (child.material.map) child.material.map.dispose();
-          child.material.dispose();
-        }
-      }
-    }
-  });
+  disposeObject3D(group);
 }

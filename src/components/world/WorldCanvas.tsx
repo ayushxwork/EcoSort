@@ -10,6 +10,7 @@ import { createLocomotionEngine, LocomotionEngine, isTypingTarget } from './loco
 import { createThirdPersonCamera, ThirdPersonCameraSystem, pinchZoomDelta, pinchPitchDelta } from './thirdPersonCamera';
 import { useCoarsePointer, useIsPortrait } from '../../hooks/useMobileInput';
 import { LEVEL_STATIONS } from './levelStations';
+import { disposeObject3D } from './disposeObject3D';
 import {
   Compass,
   ArrowRight,
@@ -270,6 +271,9 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       const delta = Math.min(clock.getDelta(), 0.1);
       const elapsedTime = clock.getElapsedTime();
 
+      // Hidden tab: keep the clock warm but skip updates and the GPU submit.
+      if (document.hidden) return;
+
       const currentActiveEnv = engineRef.current ? engineRef.current.activeEnv : envMode;
 
       if (currentActiveEnv === 'SOCIETY') {
@@ -438,7 +442,11 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       societyItemPoolRef.current = [];
       locomotion.dispose();
       mapItemManager.dispose();
+      // Free every GPU resource still in the scene graph (disposeObject3D
+      // skips shared cached textures) so re-entering the world never leaks.
+      disposeObject3D(scene);
       renderer.dispose();
+      renderer.forceContextLoss();
       if (mountRef.current && renderer.domElement) {
         mountRef.current.removeChild(renderer.domElement);
       }
@@ -523,12 +531,19 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   // REBUILD 3D BINS FOR TOWN MODE
   // -------------------------------------------------------------------------
   useEffect(() => {
-    // Society mode uses its own bins built into the scene — skip town bins entirely
-    if (!engineRef.current || envMode === 'SOCIETY') return;
+    if (!engineRef.current) return;
     const { scene, townBinMeshGroups } = engineRef.current;
 
-    townBinMeshGroups.forEach((mesh) => scene.remove(mesh));
+    // Dispose the previous station's bins before rebuilding — or whenever the
+    // world leaves town (they hang directly off the scene, not cityGroup).
+    townBinMeshGroups.forEach((mesh) => {
+      scene.remove(mesh);
+      disposeObject3D(mesh);
+    });
     townBinMeshGroups.clear();
+
+    // Society mode uses its own bins built into the scene — no town bins
+    if (envMode === 'SOCIETY') return;
 
     const stationX = currentStation.position.x;
     const stationZ = currentStation.position.z + 3.2;
