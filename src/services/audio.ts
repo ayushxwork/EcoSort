@@ -4,9 +4,12 @@
  * Sound preferences persist to localStorage so mute state survives page reloads.
  */
 
+import { startMusicLoop, stopMusicLoop, isMusicPlaying } from './music';
+
 const SOUND_ENABLED_KEY = 'ecosort_sound_enabled';
 const SLOW_MODE_KEY = 'ecosort_slow_mode';
 const VOLUME_KEY = 'ecosort_volume';
+const MUSIC_VOLUME = 0.4;
 
 export function readStoredBoolean(key: string, defaultValue: boolean): boolean {
   if (typeof window === 'undefined' || !window.localStorage) return defaultValue;
@@ -58,6 +61,8 @@ class AudioService {
   private noiseBuffer: AudioBuffer | null = null;
   private volume: number = 0.85;
   private lastPlayedAt: Record<string, number> = {};
+  private musicGain: GainNode | null = null;
+  private musicWanted: boolean = false;
 
   constructor() {
     this.soundEnabled = readStoredBoolean(SOUND_ENABLED_KEY, true);
@@ -92,6 +97,9 @@ class AudioService {
     if (this.audioCtx && this.audioCtx.state === 'suspended') {
       void this.audioCtx.resume();
     }
+    if (this.musicWanted && this.soundEnabled) {
+      this.startMusic();
+    }
   }
 
   /** Destination node for every oscillator. Falls back to speakers. */
@@ -117,6 +125,11 @@ class AudioService {
     this.soundEnabled = enabled;
     this.voiceEnabled = enabled;
     writeStoredBoolean(SOUND_ENABLED_KEY, enabled);
+    if (enabled) {
+      if (this.musicWanted) this.startMusic();
+    } else {
+      this.fadeOutMusic();
+    }
   }
 
   public isSoundEnabled(): boolean {
@@ -152,6 +165,50 @@ class AudioService {
 
   public getVolume(): number {
     return this.volume;
+  }
+
+  /**
+   * Start the constant background music loop (soft four-chord progression).
+   * Safe to call before the AudioContext is unlocked; it starts on unlock().
+   */
+  public startMusic() {
+    this.musicWanted = true;
+    if (!this.soundEnabled) return;
+    this.initContext();
+    if (!this.audioCtx) return;
+
+    if (!this.musicGain) {
+      this.musicGain = this.audioCtx.createGain();
+      this.musicGain.gain.value = MUSIC_VOLUME;
+      this.musicGain.connect(this.masterGain ?? this.audioCtx.destination);
+    } else if (this.musicGain.gain.value < MUSIC_VOLUME) {
+      this.musicGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
+      this.musicGain.gain.setValueAtTime(MUSIC_VOLUME, this.audioCtx.currentTime);
+    }
+
+    startMusicLoop(this.audioCtx, this.musicGain);
+  }
+
+  /**
+   * Stop the background music loop and silence any notes still ringing out.
+   */
+  public stopMusic() {
+    this.musicWanted = false;
+    this.fadeOutMusic();
+  }
+
+  public isMusicOn(): boolean {
+    return this.musicWanted && this.soundEnabled && isMusicPlaying();
+  }
+
+  private fadeOutMusic() {
+    stopMusicLoop();
+    if (this.musicGain && this.audioCtx) {
+      const now = this.audioCtx.currentTime;
+      this.musicGain.gain.cancelScheduledValues(now);
+      this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
+      this.musicGain.gain.linearRampToValueAtTime(0.0001, now + 0.3);
+    }
   }
 
   /**

@@ -5,6 +5,7 @@ import {
   readStoredBoolean,
   writeStoredBoolean,
 } from '../src/services/audio';
+import { CHORD_PROGRESSION, MELODY_PATTERNS } from '../src/services/music';
 import { installGlobalUiAudio } from '../src/services/uiAudio';
 
 const SOUND_KEY = 'ecosort_sound_enabled';
@@ -37,6 +38,7 @@ describe('audio service preferences', () => {
     audio.setSoundEnabled(true);
     audio.setSlowMode(false);
     audio.setVolume(0.85);
+    audio.stopMusic();
   });
 
   it('defaults to sound enabled with a sane volume', () => {
@@ -89,8 +91,56 @@ describe('audio service preferences', () => {
     expect(() => audio.speak('Sort the waste.')).not.toThrow();
   });
 
+  it('starts and stops background music without an AudioContext (jsdom)', () => {
+    expect(() => {
+      audio.startMusic();
+      audio.stopMusic();
+    }).not.toThrow();
+  });
+
   it('unlock is safe to call without an AudioContext', () => {
     expect(() => audio.unlock()).not.toThrow();
+  });
+});
+
+describe('background music engine', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    audio.setSoundEnabled(true);
+    audio.stopMusic();
+  });
+
+  afterEach(() => {
+    audio.stopMusic();
+  });
+
+  it('uses a four-chord progression with three notes per chord', () => {
+    expect(CHORD_PROGRESSION).toHaveLength(4);
+    CHORD_PROGRESSION.forEach((chord) => {
+      expect(chord).toHaveLength(3);
+      chord.forEach((freq) => expect(freq).toBeGreaterThan(0));
+    });
+  });
+
+  it('has one melody pattern per chord', () => {
+    expect(MELODY_PATTERNS).toHaveLength(CHORD_PROGRESSION.length);
+    MELODY_PATTERNS.forEach((pattern) => {
+      expect(pattern.length).toBeGreaterThan(0);
+      pattern.forEach((freq) => expect(freq).toBeGreaterThan(0));
+    });
+  });
+
+  it('does not report music as on when the AudioContext is missing', () => {
+    audio.startMusic();
+    expect(audio.isMusicOn()).toBe(false);
+    audio.stopMusic();
+  });
+
+  it('keeps music off while sound is disabled', () => {
+    audio.setSoundEnabled(false);
+    audio.startMusic();
+    expect(audio.isSoundEnabled()).toBe(false);
+    expect(audio.isMusicOn()).toBe(false);
   });
 });
 

@@ -124,6 +124,16 @@ export const WorldPage: React.FC<WorldPageProps> = ({
     audio.setSlowMode(slowMode);
   }, [soundEnabled, slowMode]);
 
+  // Constant background music while the game is on screen
+  useEffect(() => {
+    if (soundEnabled) {
+      audio.startMusic();
+    } else {
+      audio.stopMusic();
+    }
+    return () => audio.stopMusic();
+  }, [soundEnabled]);
+
   // ── World mode ────────────────────────────────────────────────────────────────
   const [worldMode, setWorldMode] = useState<'EXPLORE' | 'STATION_SORT'>('EXPLORE');
 
