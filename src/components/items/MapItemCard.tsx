@@ -17,7 +17,7 @@ export const MapItemCard: React.FC<MapItemCardProps> = ({ item, onInspect3D, cla
     if (m === 'medicine') return 'medicine_bottle';
     if (m === 'toy_car') return 'toy_car';
     return m;
-  })}.png`;
+  })}.webp`;
 
   return (
     <div
@@ -44,6 +44,8 @@ export const MapItemCard: React.FC<MapItemCardProps> = ({ item, onInspect3D, cla
           <img
             src={spriteSrc}
             alt={item.name}
+            loading="lazy"
+            decoding="async"
             className="max-h-full max-w-full object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] transform group-hover:scale-105 transition-transform duration-300"
             onError={(e) => {
               // Fallback to emoji if asset path not resolved

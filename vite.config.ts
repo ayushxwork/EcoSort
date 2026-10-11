@@ -10,6 +10,10 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
+    manualChunks: {
+      three: ['three', 'three/examples/jsm/loaders/GLTFLoader.js'],
+      react: ['react', 'react-dom'],
+    },
   },
 });

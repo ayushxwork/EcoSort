@@ -1,8 +1,27 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { LandingPage } from './components/LandingPage';
-import { WorldPage } from './components/world/WorldPage';
-import { TeacherDashboard } from './components/teacher/TeacherDashboard';
+
+// Code-split the heavy routes: the landing page must not download three.js
+// (world chunk) or the teacher dashboard bundle until the user navigates there.
+const WorldPage = lazy(() =>
+  import('./components/world/WorldPage').then((m) => ({ default: m.WorldPage }))
+);
+const TeacherDashboard = lazy(() =>
+  import('./components/teacher/TeacherDashboard').then((m) => ({ default: m.TeacherDashboard }))
+);
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center p-8">
+      <div
+        className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-400 border-t-transparent"
+        role="status"
+        aria-label="Loading"
+      />
+    </div>
+  );
+}
 
 export function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'game' | 'report'>('landing');
@@ -29,13 +48,19 @@ export function App() {
         )}
 
         {currentView === 'game' && (
-          <WorldPage
-            onExit={() => setCurrentView('landing')}
-            onOpenTeacherReport={() => setCurrentView('report')}
-          />
+          <Suspense fallback={<RouteFallback />}>
+            <WorldPage
+              onExit={() => setCurrentView('landing')}
+              onOpenTeacherReport={() => setCurrentView('report')}
+            />
+          </Suspense>
         )}
 
-        {currentView === 'report' && <TeacherDashboard />}
+        {currentView === 'report' && (
+          <Suspense fallback={<RouteFallback />}>
+            <TeacherDashboard />
+          </Suspense>
+        )}
       </main>
     </div>
   );

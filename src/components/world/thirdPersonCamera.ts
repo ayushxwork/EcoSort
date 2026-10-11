@@ -47,6 +47,13 @@ export function createThirdPersonCamera(
   // Raycaster for occlusion detection
   const raycaster = new THREE.Raycaster();
 
+  // Scratch objects reused every frame — the update loop must not allocate.
+  const scratchLookTarget = new THREE.Vector3();
+  const desiredCamPos = new THREE.Vector3();
+  const rayDir = new THREE.Vector3();
+  const obsBox = new THREE.Box3();
+  const hitPoint = new THREE.Vector3();
+
   // Zoom distance clamp strictly between 5.0m and 55.0m
   const clampDistance = (dist: number) => Math.max(5.0, Math.min(55.0, dist));
 
@@ -105,14 +112,14 @@ export function createThirdPersonCamera(
     const totalPitch = Math.max(0.18, Math.min(1.25, calculateBasePitch(currentDistance) + pitchOffset));
 
     // Focus point is player's chest/head height
-    const avatarLookTarget = targetPos.clone().add(new THREE.Vector3(0, 1.4, 0));
-    currentLookAt.lerp(avatarLookTarget, Math.min(1.0, delta * 14.0));
+    scratchLookTarget.set(targetPos.x, targetPos.y + 1.4, targetPos.z);
+    currentLookAt.lerp(scratchLookTarget, Math.min(1.0, delta * 14.0));
 
     // Calculate ideal camera spherical coordinates relative to look target
     const horizontalDist = currentDistance * Math.cos(totalPitch);
     const verticalDist = currentDistance * Math.sin(totalPitch);
 
-    const desiredCamPos = new THREE.Vector3(
+    desiredCamPos.set(
       currentLookAt.x + horizontalDist * Math.sin(yaw),
       currentLookAt.y + verticalDist,
       currentLookAt.z + horizontalDist * Math.cos(yaw)
@@ -120,17 +127,15 @@ export function createThirdPersonCamera(
 
     // Collision Raycast: check if a building obstacle is between look target and camera
     let actualDistance = currentDistance;
-    const rayDir = desiredCamPos.clone().sub(currentLookAt).normalize();
+    rayDir.copy(desiredCamPos).sub(currentLookAt).normalize();
 
     // Check simple obstacle line segment intersections to prevent camera clipping inside buildings
     for (const obs of obstacles) {
       if (obs.type === 'building') {
-        const box = new THREE.Box3(
-          new THREE.Vector3(obs.minX, 0, obs.minZ),
-          new THREE.Vector3(obs.maxX, 8, obs.maxZ)
-        );
+        obsBox.min.set(obs.minX, 0, obs.minZ);
+        obsBox.max.set(obs.maxX, 8, obs.maxZ);
         raycaster.set(currentLookAt, rayDir);
-        const hit = raycaster.ray.intersectBox(box, new THREE.Vector3());
+        const hit = raycaster.ray.intersectBox(obsBox, hitPoint);
         if (hit) {
           const hitDist = currentLookAt.distanceTo(hit);
           if (hitDist > 1.5 && hitDist < actualDistance) {

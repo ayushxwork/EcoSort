@@ -6,7 +6,6 @@ export interface ProceduralCityResult {
   cityGroup: THREE.Group;
   obstacles: WorldObstacle[];
   windowMaterials: THREE.MeshStandardMaterial[];
-  streetLampLights: THREE.PointLight[];
   windTurbineRotors: THREE.Group[];
   waterMesh: THREE.Mesh;
   stationBeacons: Map<number, THREE.Group>;
@@ -18,9 +17,10 @@ export function createProceduralCity(): ProceduralCityResult {
   const cityGroup = new THREE.Group();
   const obstacles: WorldObstacle[] = [];
   const windowMaterials: THREE.MeshStandardMaterial[] = [];
-  const streetLampLights: THREE.PointLight[] = [];
+  const streetLampGlowMats: THREE.MeshBasicMaterial[] = [];
   const windTurbineRotors: THREE.Group[] = [];
   const stationBeacons = new Map<number, THREE.Group>();
+  let waterFrameCounter = 0;
 
   // Helper for adding box obstacle
   const addObstacle = (id: string, minX: number, maxX: number, minZ: number, maxZ: number, type: WorldObstacle['type'] = 'building') => {
@@ -487,6 +487,11 @@ export function createProceduralCity(): ProceduralCityResult {
   const poleMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 });
   const bulbMat = new THREE.MeshStandardMaterial({ color: 0xfef08a, emissive: 0xfef08a, emissiveIntensity: 0.2 });
 
+  // One hemisphere light replaces the 14 per-lamp PointLights — far cheaper
+  // per-fragment cost while keeping the town readable at night and day.
+  const hemiLight = new THREE.HemisphereLight(0x9ec9ff, 0x3d6b3f, 0.9);
+  cityGroup.add(hemiLight);
+
   lampPositions.forEach(([lx, lz], idx) => {
     const lampGroup = new THREE.Group();
     lampGroup.position.set(lx, 0, lz);
@@ -507,11 +512,19 @@ export function createProceduralCity(): ProceduralCityResult {
     bulb.position.set(lx > 0 ? -0.7 : 0.7, 4.0, 0);
     lampGroup.add(bulb);
 
-    // Dynamic point light
-    const pLight = new THREE.PointLight(0xfef08a, 0.2, 12);
-    pLight.position.set(lx > 0 ? -0.7 : 0.7, 3.8, 0);
-    lampGroup.add(pLight);
-    streetLampLights.push(pLight);
+    // Fake light pool on the ground — an additive glow disc instead of a
+    // real PointLight (no extra shader work per material).
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: 0xfef08a,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+    });
+    const glowDisc = new THREE.Mesh(new THREE.CircleGeometry(1.8, 24), glowMat);
+    glowDisc.rotation.x = -Math.PI / 2;
+    glowDisc.position.set(lx > 0 ? -0.7 : 0.7, 0.06, 0);
+    lampGroup.add(glowDisc);
+    streetLampGlowMats.push(glowMat);
 
     cityGroup.add(lampGroup);
     addObstacle(`lamp_${idx}`, lx - 0.3, lx + 0.3, lz - 0.3, lz + 0.3, 'prop');
@@ -622,9 +635,10 @@ export function createProceduralCity(): ProceduralCityResult {
       }
     });
 
-    // Update streetlamps
-    streetLampLights.forEach((light) => {
-      light.intensity = 0.2 + intensity * 1.8;
+    // Update streetlamp bulbs and their fake ground glow pools
+    bulbMat.emissiveIntensity = 0.2 + intensity * 1.8;
+    streetLampGlowMats.forEach((mat) => {
+      mat.opacity = intensity * 0.55;
     });
   };
 
@@ -634,8 +648,10 @@ export function createProceduralCity(): ProceduralCityResult {
       rotor.rotation.z += 0.025;
     });
 
-    // 2. Animate river water waves
-    if (waterMesh && waterMesh.geometry) {
+    // 2. Animate river water waves — every other frame is visually identical
+    //    at 60fps and halves the per-frame geometry upload cost.
+    waterFrameCounter++;
+    if (waterFrameCounter % 2 === 0 && waterMesh && waterMesh.geometry) {
       const posAttr = waterMesh.geometry.attributes.position;
       for (let i = 0; i < posAttr.count; i++) {
         const u = posAttr.getX(i);
@@ -665,7 +681,6 @@ export function createProceduralCity(): ProceduralCityResult {
     cityGroup,
     obstacles,
     windowMaterials,
-    streetLampLights,
     windTurbineRotors,
     waterMesh,
     stationBeacons,

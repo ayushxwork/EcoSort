@@ -62,7 +62,7 @@ export interface LevelConfig {
   energyLink: string;
   targetCount: number;
   isBonus?: boolean;
-  sceneType?: 'KITCHEN' | 'SOCIETY' | 'TOWN';
+  sceneType?: 'SOCIETY' | 'TOWN';
   timeLimit?: number; // seconds
 }
 

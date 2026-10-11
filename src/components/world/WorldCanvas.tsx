@@ -3,20 +3,16 @@ import * as THREE from 'three';
 import { BinType, ItemData } from '../../types/game';
 import { ALL_BINS } from '../../data/bins';
 import { createProceduralCity, ProceduralCityResult } from './proceduralCity';
-import { createHomeKitchenScene, HomeKitchenSceneResult } from './homeKitchenScene';
 import { createSocietyScene, SocietySceneResult } from './societyScene';
 import { createLitterScatter, LitterScatterSystem } from './litterScatter';
 import { createPlayerCharacter, PlayerCharacter } from './playerCharacter';
 import { createLocomotionEngine, LocomotionEngine, isTypingTarget } from './locomotion';
 import { createThirdPersonCamera, ThirdPersonCameraSystem, pinchZoomDelta, pinchPitchDelta } from './thirdPersonCamera';
-import { useCoarsePointer } from '../../hooks/useMobileInput';
+import { useCoarsePointer, useIsPortrait } from '../../hooks/useMobileInput';
 import { LEVEL_STATIONS } from './levelStations';
 import {
   Compass,
-  Footprints,
-  Play,
   ArrowRight,
-  Camera,
   Sparkles,
   Box,
 } from 'lucide-react';
@@ -48,8 +44,6 @@ export interface WorldCanvasProps {
   truckArriving?: boolean;
 }
 
-export type KitchenCameraMode = 'REFERENCE' | 'FOLLOW' | 'SORT';
-
 export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   currentLevelId,
   currentItem,
@@ -73,38 +67,50 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   const mountRef = useRef<HTMLDivElement>(null);
   const currentStation = LEVEL_STATIONS.find((s) => s.id === currentLevelId) || LEVEL_STATIONS[0];
 
-  // Environment Mode: 'KITCHEN', 'TOWN', or 'SOCIETY' (Level 1 Waste Detective)
-  const [envMode, setEnvMode] = useState<'KITCHEN' | 'TOWN' | 'SOCIETY'>(
+  // Environment Mode: 'TOWN' or 'SOCIETY' (Level 1 Waste Detective)
+  const [envMode, setEnvMode] = useState<'TOWN' | 'SOCIETY'>(
     currentLevelId === 1 ? 'SOCIETY' : 'TOWN'
   );
-
-  // Kitchen Camera Preset: 'REFERENCE' (Exact screenshot view), 'FOLLOW' (Track Kai), 'SORT' (Table focus)
-  const [kitchenCamMode, setKitchenCamMode] = useState<KitchenCameraMode>('REFERENCE');
 
   // Proximity trigger state (Town)
   const [isNearStation, setIsNearStation] = useState<boolean>(true);
   const [nearestStation, setNearestStation] = useState<typeof currentStation>(currentStation);
 
-  // Interactive object hint in Kitchen
-  const [kitchenPrompt, setKitchenPrompt] = useState<string | null>(null);
-
   // Proximity to scattered town map items
   const [nearbyMapItem, setNearbyMapItem] = useState<{ id: string; name: string; modelType: string } | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
-  // Throw dragging state
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
-  const [currentDrag, setCurrentDrag] = useState<{ x: number; y: number } | null>(null);
+  // Render-loop proximity change detectors — the loop runs at frame rate and
+  // MUST NOT call setState every frame. Each setter below fires only when the
+  // value actually changes (mirrors the refs-not-state discipline below).
+  const lastMapItemIdRef = useRef<string | null>(null);
+  const lastNearStationRef = useRef(true);
+  const lastStationRef = useRef<typeof currentStation>(currentStation);
+
+  // Throw dragging state — continuous pointer values live in refs (never
+  // state): updating state on every pointermove re-renders the whole tree.
+  // isAiming flips twice per gesture to mount/unmount the SVG overlay only.
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const currentDragRef = useRef<{ x: number; y: number } | null>(null);
   const isDraggingThrowRef = useRef(false);
+  const capturedPointerIdRef = useRef<number | null>(null);
+  const [isAiming, setIsAiming] = useState(false);
+  const aimLineRef = useRef<SVGLineElement>(null);
+  const aimCircleRef = useRef<SVGCircleElement>(null);
 
   // Touch input state (tap-to-move + two-finger pinch zoom/pitch)
   const isCoarsePointer = useCoarsePointer();
+  const isPortrait = useIsPortrait();
   const activeTouchesRef = useRef<Map<number, { x: number; y: number }>>(new Map());
   const pinchStateRef = useRef<{ dist: number; midY: number } | null>(null);
   const tapCandidateRef = useRef<{ x: number; y: number } | null>(null);
+  // Desktop click-to-move: tracks the mousedown so pointerup can tell a tap
+  // apart from a throw drag that never left the threshold.
+  const mouseDownCandidateRef = useRef<{ x: number; y: number; throwArmed: boolean } | null>(null);
 
   // Society pickup prompt
   const [nearbyLitterItem, setNearbyLitterItem] = useState<ItemData | null>(null);
+  const lastLitterIdRef = useRef<string | null>(null);
   // Stable ref for onPickupSocietyItem so the render loop can call it without stale closure
   const onPickupSocietyItemRef = useRef(onPickupSocietyItem);
   useEffect(() => { onPickupSocietyItemRef.current = onPickupSocietyItem; }, [onPickupSocietyItem]);
@@ -128,15 +134,13 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     locomotion: LocomotionEngine;
     player: PlayerCharacter;
     city: ProceduralCityResult;
-    kitchen: HomeKitchenSceneResult;
     society: SocietySceneResult | null;
     litter: LitterScatterSystem | null;
     mapItemManager: MapItemManager;
     itemMeshGroup: THREE.Group | null;
     townBinMeshGroups: Map<BinType, THREE.Group>;
     clock: THREE.Clock;
-    activeEnv: 'KITCHEN' | 'TOWN' | 'SOCIETY';
-    activeKitchenCam: KitchenCameraMode;
+    activeEnv: 'TOWN' | 'SOCIETY';
     cleanup: () => void;
   } | null>(null);
 
@@ -160,13 +164,12 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     }
   }, [currentLevelId]);
 
-  // Keep ref updated with latest cam/env modes
+  // Keep ref updated with latest env mode
   useEffect(() => {
     if (engineRef.current) {
       engineRef.current.activeEnv = envMode;
-      engineRef.current.activeKitchenCam = kitchenCamMode;
     }
-  }, [envMode, kitchenCamMode]);
+  }, [envMode]);
 
   // -------------------------------------------------------------------------
   // INITIALIZE 3D GRAPHICS PIPELINE
@@ -193,6 +196,9 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     renderer.shadowMap.type = isCoarsePointer ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
+    // Block scroll/zoom gestures on the 3D surface only — the container keeps
+    // touch-manipulation so child modals can still scroll on touch.
+    renderer.domElement.style.touchAction = 'none';
     container.appendChild(renderer.domElement);
 
     // 3. Player Character: KAI (Matching model sheet)
@@ -200,7 +206,6 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     scene.add(player.group);
 
     // 4. Create Both 3D Environments
-    const kitchen = createHomeKitchenScene(activeBins);
     const city = createProceduralCity();
     // Society scene (Level 1 Waste Detective)
     const society = createSocietyScene(['wet', 'dry', 'hazardous', 'residual']);
@@ -255,84 +260,19 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     // -----------------------------------------------------------------------
     // RENDER LOOP
     // -----------------------------------------------------------------------
+    // Render loop — per-frame scratch vectors (never allocate inside the loop)
+    // -----------------------------------------------------------------------
+    const binTriggerScratch = new THREE.Vector3();
+    const stationPosScratch = new THREE.Vector3();
+
     const renderLoop = () => {
       animationFrameId = requestAnimationFrame(renderLoop);
       const delta = Math.min(clock.getDelta(), 0.1);
       const elapsedTime = clock.getElapsedTime();
 
       const currentActiveEnv = engineRef.current ? engineRef.current.activeEnv : envMode;
-      const currentActiveCam = engineRef.current ? engineRef.current.activeKitchenCam : kitchenCamMode;
 
-      if (currentActiveEnv === 'KITCHEN') {
-        // Animate kitchen objects (bin lid flaps, bouncing items)
-        kitchen.animate(elapsedTime, delta);
-
-        const avatarPos = locomotion.getPosition();
-        locomotion.update(delta, cameraSystem.getAzimuthAngle());
-
-        // ── Bin proximity: glow ring + lid pre-open when item is near ────────────
-        const itemGroup = engineRef.current?.itemMeshGroup;
-        if (itemGroup) {
-          kitchen.binTriggers.forEach((triggerMesh, binType) => {
-            // Get the trigger mesh's world position
-            const triggerWorld = new THREE.Vector3();
-            triggerMesh.getWorldPosition(triggerWorld);
-            const dist = itemGroup.position.distanceTo(triggerWorld);
-            const near = dist < 1.2;
-            // Glow ring
-            const glowMesh = kitchen.binGlowRings.get(binType);
-            if (glowMesh) {
-              const mat = glowMesh.material as THREE.MeshBasicMaterial;
-              mat.opacity = THREE.MathUtils.lerp(mat.opacity, near ? 0.72 : 0, delta * 8);
-            }
-            // Open lid when item approaches
-            if (near) kitchen.triggerBinAnimation(binType);
-          });
-        } else {
-          // No item — fade all glow rings out
-          kitchen.binGlowRings.forEach((glowMesh) => {
-            const mat = glowMesh.material as THREE.MeshBasicMaterial;
-            mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0, delta * 6);
-          });
-        }
-
-        // Camera handling for Kitchen
-        if (currentActiveCam === 'REFERENCE') {
-          // Smoothly interpolate to exact reference screenshot angle
-          cameraSystem.camera.position.lerp(kitchen.referenceCameraPosition, delta * 4.5);
-          const targetLook = kitchen.referenceCameraLookAt;
-          cameraSystem.camera.lookAt(targetLook.x, targetLook.y, targetLook.z);
-        } else if (currentActiveCam === 'SORT') {
-          // Focus steadily between the dining table and 4 bins
-          cameraSystem.camera.position.lerp(kitchen.sortCameraPosition, delta * 5.0);
-          const targetLook = kitchen.sortCameraLookAt;
-          cameraSystem.camera.lookAt(targetLook.x, targetLook.y, targetLook.z);
-        } else {
-          // 'FOLLOW' mode: 3rd person follow Kai (camera locked behind his back)
-          cameraSystem.update(avatarPos, delta, player.currentAngle);
-        }
-
-        // Proximity detection for friendly Kai interactions in the kitchen
-        const distFridge = avatarPos.distanceTo(new THREE.Vector3(-3.8, 0, -2.8));
-        const distBins = avatarPos.distanceTo(new THREE.Vector3(-2.1, 0, -3.2));
-        const distTable = avatarPos.distanceTo(new THREE.Vector3(0.5, 0, 0.5));
-        const distStove = avatarPos.distanceTo(new THREE.Vector3(3.0, 0, -2.8));
-        const distWindow = avatarPos.distanceTo(new THREE.Vector3(-1.2, 0, -3.2));
-
-        if (distFridge < 1.6) {
-          setKitchenPrompt('Refrigerator: Fresh milk and vegetables stay cold.');
-        } else if (distBins < 1.7) {
-          setKitchenPrompt('Sorting Bins: Green, Blue, Yellow, and Red bins stand ready.');
-        } else if (distTable < 1.8) {
-          setKitchenPrompt('Dining Table: Bananas, apples, and items wait on the table.');
-        } else if (distStove < 1.6) {
-          setKitchenPrompt('Cooking Stove: Clean biogas from food waste powers this burner.');
-        } else if (distWindow < 1.8) {
-          setKitchenPrompt('Sunny Window: Sunlight shines on town hills and the clean river.');
-        } else {
-          setKitchenPrompt(null);
-        }
-      } else if (currentActiveEnv === 'SOCIETY') {
+      if (currentActiveEnv === 'SOCIETY') {
         // ── SOCIETY MODE (Level 1 Waste Detective) ──────────────────────────────────────────────
         society.animate(elapsedTime, delta);
 
@@ -351,7 +291,12 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         if (litSystem) {
           litSystem.update(avatarPos, elapsedTime, delta);
           const nearItem = litSystem.getNearestPickupItem(avatarPos, 1.5);
-          setNearbyLitterItem(nearItem && !litSystem.getHeldItem() ? nearItem.itemData : null);
+          const nextLitter = nearItem && !litSystem.getHeldItem() ? nearItem.itemData : null;
+          const nextLitterId = nextLitter ? nextLitter.id : null;
+          if (nextLitterId !== lastLitterIdRef.current) {
+            lastLitterIdRef.current = nextLitterId;
+            setNearbyLitterItem(nextLitter);
+          }
 
           // Auto-pickup callback (fires once per pickup event)
           const heldNow = litSystem.getHeldItem();
@@ -364,9 +309,8 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
           const heldItem = litSystem.getHeldItem();
           if (heldItem) {
             society.binTriggers.forEach((triggerMesh, binType) => {
-              const trigWorld = new THREE.Vector3();
-              triggerMesh.getWorldPosition(trigWorld);
-              const dist = avatarPos.distanceTo(trigWorld);
+              triggerMesh.getWorldPosition(binTriggerScratch);
+              const dist = avatarPos.distanceTo(binTriggerScratch);
               const near2 = dist < 1.4;
               const glowMesh = society.binGlowRings.get(binType);
               if (glowMesh) {
@@ -391,28 +335,34 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         // Update scattered 3D items across town
         mapItemManager.update(elapsedTime, delta, avatarPos);
         const nearItemInstance = mapItemManager.getNearestItem(avatarPos, 2.6);
-        if (nearItemInstance) {
-          const cfg = nearItemInstance.config;
-          const matched = GAME_ITEMS.find((it) => it.modelType === cfg.modelType);
-          setNearbyMapItem({
-            id: cfg.id,
-            name: matched ? matched.name : cfg.modelType,
-            modelType: cfg.modelType,
-          });
-        } else {
-          setNearbyMapItem(null);
+        const nextMapItemId = nearItemInstance ? nearItemInstance.config.id : null;
+        if (nextMapItemId !== lastMapItemIdRef.current) {
+          lastMapItemIdRef.current = nextMapItemId;
+          if (nearItemInstance) {
+            const cfg = nearItemInstance.config;
+            const matched = GAME_ITEMS.find((it) => it.modelType === cfg.modelType);
+            setNearbyMapItem({
+              id: cfg.id,
+              name: matched ? matched.name : cfg.modelType,
+              modelType: cfg.modelType,
+            });
+          } else {
+            setNearbyMapItem(null);
+          }
         }
 
         // Check proximity to current mission station
-        const targetStationPos = new THREE.Vector3(
-          currentStation.position.x,
-          0,
-          currentStation.position.z + 3.2
-        );
-        const distToStation = avatarPos.distanceTo(targetStationPos);
+        stationPosScratch.set(currentStation.position.x, 0, currentStation.position.z + 3.2);
+        const distToStation = avatarPos.distanceTo(stationPosScratch);
         const near = distToStation < 3.8;
-        setIsNearStation(near);
-        setNearestStation(currentStation);
+        if (near !== lastNearStationRef.current) {
+          lastNearStationRef.current = near;
+          setIsNearStation(near);
+        }
+        if (currentStation !== lastStationRef.current) {
+          lastStationRef.current = currentStation;
+          setNearestStation(currentStation);
+        }
 
         if (worldMode === 'EXPLORE') {
           locomotion.update(delta, cameraSystem.getAzimuthAngle());
@@ -461,13 +411,8 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         } else if (worldMode === 'STATION_SORT' && envMode === 'TOWN') {
           onSetWorldMode('EXPLORE');
         }
-      } else if (key === 'c' && envMode === 'KITCHEN') {
-        // Cycle camera mode
-        setKitchenCamMode((prev) =>
-          prev === 'REFERENCE' ? 'FOLLOW' : prev === 'FOLLOW' ? 'SORT' : 'REFERENCE'
-        );
       } else if (['1', '2', '3', '4'].includes(key)) {
-        // Quick sort with number keys in Kitchen
+        // Quick sort with number keys
         const idx = parseInt(key, 10) - 1;
         const binOrder: BinType[] = ['wet', 'dry', 'ewaste', 'hazardous'];
         const chosenBin = binOrder[idx];
@@ -506,7 +451,6 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       locomotion,
       player,
       city,
-      kitchen,
       society,
       litter,
       mapItemManager,
@@ -514,7 +458,6 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       townBinMeshGroups,
       clock,
       activeEnv: isInitialSociety ? 'SOCIETY' : 'TOWN',
-      activeKitchenCam: 'REFERENCE',
       cleanup,
     };
 
@@ -524,15 +467,14 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   }, []);
 
   // -------------------------------------------------------------------------
-  // ENVIRONMENT SWITCHING (Society <-> Kitchen <-> Town)
+  // ENVIRONMENT SWITCHING (Society <-> Town)
   // -------------------------------------------------------------------------
   useEffect(() => {
     if (!engineRef.current) return;
-    const { scene, city, kitchen, society, locomotion, cameraSystem, player } = engineRef.current;
+    const { scene, city, society, locomotion, cameraSystem, player } = engineRef.current;
 
     if (envMode === 'SOCIETY') {
       scene.remove(city.cityGroup);
-      scene.remove(kitchen.kitchenGroup);
       if (society) scene.add(society.societyGroup);
       scene.background = new THREE.Color(0xfff5e6);
 
@@ -551,23 +493,8 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         player.setFacingAngle(spawnFacing, 1.0);
         cameraSystem.setOrbit(spawnFacing + Math.PI);
       }
-    } else if (envMode === 'KITCHEN') {
-      // Remove city/society and add kitchen
-      scene.remove(city.cityGroup);
-      if (society) scene.remove(society.societyGroup);
-      scene.add(kitchen.kitchenGroup);
-      scene.background = new THREE.Color(0xfffaed);
-
-      locomotion.setObstacles(kitchen.obstacles);
-      locomotion.setBounds(-4.6, 4.6, -4.0, 4.0);
-      locomotion.setPosition(new THREE.Vector3(0.0, 0, 2.2));
-      player.setFacingAngle(0, 1.0);
-
-      cameraSystem.setDistance(6.5);
-      setKitchenCamMode('REFERENCE');
     } else {
       // TOWN
-      scene.remove(kitchen.kitchenGroup);
       if (society) scene.remove(society.societyGroup);
       scene.add(city.cityGroup);
       scene.background = new THREE.Color(0x0f172a);
@@ -585,17 +512,10 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     }
   }, [envMode, currentStation]);
 
-  // Update Energy levels in Procedural City & Kitchen
+  // Update Energy levels in Procedural City
   useEffect(() => {
     if (engineRef.current) {
       engineRef.current.city.updateEnergy(energyLevel);
-      const t = energyLevel / 100;
-      // Pendant lamp gets warmer and brighter
-      const pendant = engineRef.current.kitchen.pendantLight;
-      if (pendant) pendant.intensity = 0.8 + t * 1.4;
-      // Sun through window brightens with energy (window light effect)
-      const sun = engineRef.current.kitchen.sunLight;
-      if (sun) sun.intensity = 1.2 + t * 1.0;
     }
   }, [energyLevel]);
 
@@ -604,7 +524,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   // -------------------------------------------------------------------------
   useEffect(() => {
     // Society mode uses its own bins built into the scene — skip town bins entirely
-    if (!engineRef.current || envMode === 'KITCHEN' || envMode === 'SOCIETY') return;
+    if (!engineRef.current || envMode === 'SOCIETY') return;
     const { scene, townBinMeshGroups } = engineRef.current;
 
     townBinMeshGroups.forEach((mesh) => scene.remove(mesh));
@@ -679,15 +599,10 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     });
     itemGroup.name = `Item_${currentItem.id}`;
 
-    if (envMode === 'KITCHEN') {
-      // Place right on the Dining Table runner next to the fruit bowl
-      itemGroup.position.set(0.05, 1.15, 0.5);
-    } else {
-      // Place on Town Station table
-      const stationX = currentStation.position.x;
-      const stationZ = currentStation.position.z + 3.2;
-      itemGroup.position.set(stationX, 1.25, stationZ + 0.8);
-    }
+    // Place on Town Station table
+    const stationX = currentStation.position.x;
+    const stationZ = currentStation.position.z + 3.2;
+    itemGroup.position.set(stationX, 1.25, stationZ + 0.8);
 
     scene.add(itemGroup);
     engineRef.current.itemMeshGroup = itemGroup;
@@ -743,7 +658,6 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       if (!engineRef.current) return;
 
       const isSociety = envMode === 'SOCIETY';
-      const isKitchen = envMode === 'KITCHEN';
 
       if (isSociety) {
         // In society mode, throw the litter scatter's held item mesh
@@ -786,7 +700,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         return;
       }
 
-      // Kitchen / Town paths require itemMeshGroup
+      // Town path requires itemMeshGroup
       if (!engineRef.current.itemMeshGroup) return;
       const itemGroup = engineRef.current.itemMeshGroup;
 
@@ -795,26 +709,14 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       let targetY = 1.0;
       let targetZ = 0;
 
-      if (isKitchen) {
-        const binMesh = engineRef.current.kitchen.binMeshes.get(targetBin);
-        if (binMesh) {
-          targetX = binMesh.position.x;
-          targetY = 1.05;
-          targetZ = binMesh.position.z;
-        } else {
-          onThrowItem(targetBin);
-          return;
-        }
+      const targetGroup = engineRef.current.townBinMeshGroups.get(targetBin);
+      if (targetGroup) {
+        targetX = targetGroup.position.x;
+        targetY = 1.45;
+        targetZ = targetGroup.position.z;
       } else {
-        const targetGroup = engineRef.current.townBinMeshGroups.get(targetBin);
-        if (targetGroup) {
-          targetX = targetGroup.position.x;
-          targetY = 1.45;
-          targetZ = targetGroup.position.z;
-        } else {
-          onThrowItem(targetBin);
-          return;
-        }
+        onThrowItem(targetBin);
+        return;
       }
 
       const startPos = itemGroup.position.clone();
@@ -838,18 +740,13 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         if (progress < 1.0) {
           requestAnimationFrame(throwStep);
         } else {
-          if (isKitchen) {
-            engineRef.current?.kitchen.triggerBinAnimation(targetBin);
-            engineRef.current?.player.celebrate();
-          } else {
-            const targetGroup = engineRef.current?.townBinMeshGroups.get(targetBin);
-            if (targetGroup) {
-              const origY = targetGroup.position.y;
-              targetGroup.position.y = origY - 0.12;
-              setTimeout(() => { if (targetGroup) targetGroup.position.y = origY; }, 150);
-            }
-            engineRef.current?.player.celebrate();
+          const targetGroup = engineRef.current?.townBinMeshGroups.get(targetBin);
+          if (targetGroup) {
+            const origY = targetGroup.position.y;
+            targetGroup.position.y = origY - 0.12;
+            setTimeout(() => { if (targetGroup) targetGroup.position.y = origY; }, 150);
           }
+          engineRef.current?.player.celebrate();
           onThrowItem(targetBin);
         }
       };
@@ -862,6 +759,55 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   // -------------------------------------------------------------------------
   // POINTER EVENT HANDLERS (Click-to-Move, Drag-to-Throw, Camera Orbit)
   // -------------------------------------------------------------------------
+  const updateAimVisual = (start: { x: number; y: number }, end: { x: number; y: number }) => {
+    const line = aimLineRef.current;
+    const circle = aimCircleRef.current;
+    if (line) {
+      line.setAttribute('x1', String(start.x));
+      line.setAttribute('y1', String(start.y));
+      line.setAttribute('x2', String(end.x));
+      line.setAttribute('y2', String(end.y));
+    }
+    if (circle) {
+      circle.setAttribute('cx', String(end.x));
+      circle.setAttribute('cy', String(end.y));
+    }
+  };
+
+  const beginThrowDrag = (e: React.PointerEvent, container: HTMLElement) => {
+    const rect = container.getBoundingClientRect();
+    const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    isDraggingThrowRef.current = true;
+    dragStartRef.current = pt;
+    currentDragRef.current = pt;
+    // Capture keeps the drag alive when the pointer leaves the container
+    // (otherwise mouse drags ending outside never fire pointerup here).
+    e.currentTarget.setPointerCapture(e.pointerId);
+    capturedPointerIdRef.current = e.pointerId;
+    setIsAiming(true);
+  };
+
+  const cancelThrowDrag = () => {
+    const capturedId = capturedPointerIdRef.current;
+    capturedPointerIdRef.current = null;
+    isDraggingThrowRef.current = false;
+    dragStartRef.current = null;
+    currentDragRef.current = null;
+    setIsAiming(false);
+    const el = mountRef.current;
+    if (capturedId !== null && el && el.hasPointerCapture(capturedId)) {
+      el.releasePointerCapture(capturedId);
+    }
+  };
+
+  // The WorldPage portrait gate freezes input at window level; drop any
+  // in-flight drag here so no phantom aim state survives the rotation
+  // (a mid-rotation pointerup is swallowed by the freeze listeners).
+  useEffect(() => {
+    if (isCoarsePointer && isPortrait) cancelThrowDrag();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCoarsePointer, isPortrait]);
+
   const handlePointerDown = (e: React.PointerEvent) => {
     if (!engineRef.current || !mountRef.current) return;
     const container = mountRef.current;
@@ -885,31 +831,29 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
           midY: (pts[0].y + pts[1].y) / 2,
         };
         tapCandidateRef.current = null; // pinch is not a tap
-        isDraggingThrowRef.current = false;
-        setDragStart(null);
-        setCurrentDrag(null);
+        cancelThrowDrag();
         return;
       }
       tapCandidateRef.current = { x: e.clientX, y: e.clientY };
     }
 
     if (e.button === 0) {
-      // Left click
-      if (envMode === 'KITCHEN') {
-        // Initiate throw drag
-        if (!isThrowing && currentItem) {
-          const rect = container.getBoundingClientRect();
-          isDraggingThrowRef.current = true;
-          setDragStart({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-          setCurrentDrag({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      // Drop any stale mouse candidate from a previous gesture
+      mouseDownCandidateRef.current = null;
+
+      // Throw drags start on the 3D canvas only — pointerdown bubbles up from
+      // HUD buttons, and capturing the pointer there would break their onClick.
+      if (e.target instanceof HTMLCanvasElement) {
+        if (worldMode === 'STATION_SORT' && !isThrowing && currentItem) {
+          beginThrowDrag(e, container);
         }
-      } else {
-        if (worldMode === 'STATION_SORT') {
-          if (isThrowing || !currentItem) return;
-          const rect = container.getBoundingClientRect();
-          isDraggingThrowRef.current = true;
-          setDragStart({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-          setCurrentDrag({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        // Desktop click-to-move candidate (mouse only; touch has its own tap path)
+        if (e.pointerType === 'mouse') {
+          mouseDownCandidateRef.current = {
+            x: e.clientX,
+            y: e.clientY,
+            throwArmed: isDraggingThrowRef.current,
+          };
         }
       }
     }
@@ -936,9 +880,11 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       }
     }
 
-    if (isDraggingThrowRef.current) {
+    if (isDraggingThrowRef.current && dragStartRef.current) {
       const rect = mountRef.current.getBoundingClientRect();
-      setCurrentDrag({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      currentDragRef.current = pt;
+      updateAimVisual(dragStartRef.current, pt);
     }
   };
 
@@ -946,36 +892,45 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     if (!engineRef.current || !mountRef.current) return;
     engineRef.current.cameraSystem.onPointerUp(e.nativeEvent);
 
-    if (isDraggingThrowRef.current && dragStart) {
-      isDraggingThrowRef.current = false;
+    // Captured before the throw branch clears it: a tap that armed a throw
+    // drag must not also fire tap-to-move (matches the mouse behavior).
+    const throwWasArmed = isDraggingThrowRef.current;
+
+    if (isDraggingThrowRef.current && dragStartRef.current) {
+      const dragStart = dragStartRef.current;
+      cancelThrowDrag();
       const rect = mountRef.current.getBoundingClientRect();
       const currentX = e.clientX - rect.left;
       const currentY = e.clientY - rect.top;
 
       const deltaY = dragStart.y - currentY;
       const deltaX = currentX - dragStart.x;
-      setDragStart(null);
-      setCurrentDrag(null);
 
       // Upward flick throw
       if (deltaY > 35) {
-        if (envMode === 'KITCHEN') {
-          // Use activeBins so Level 1 (2 bins) maps correctly
-          const numKitchenBins = activeBins.length;
-          const spreadPx = Math.max(200, numKitchenBins * 110);
-          const binIndex = Math.min(
-            Math.max(0, Math.floor(((deltaX + spreadPx / 2) / spreadPx) * numKitchenBins)),
-            numKitchenBins - 1
+        const numBins = activeBins.length;
+        const binIndex = Math.min(
+          Math.max(0, Math.floor(((deltaX + 150) / 300) * numBins)),
+          numBins - 1
+        );
+        const targetBin = activeBins[binIndex] || activeBins[0];
+        executeThrow(targetBin);
+      }
+    }
+
+    // Desktop click-to-move: plain left click on the ground (no throw drag)
+    if (e.pointerType === 'mouse' && e.button === 0) {
+      const candidate = mouseDownCandidateRef.current;
+      mouseDownCandidateRef.current = null;
+      if (candidate && !candidate.throwArmed) {
+        const moved = Math.hypot(e.clientX - candidate.x, e.clientY - candidate.y);
+        const canWalk = !(envMode === 'TOWN' && worldMode === 'STATION_SORT');
+        if (moved < 12 && canWalk && e.target instanceof HTMLCanvasElement) {
+          engineRef.current.locomotion.createRaycastHandler(
+            e.nativeEvent,
+            mountRef.current,
+            engineRef.current.cameraSystem.camera
           );
-          executeThrow(activeBins[binIndex]);
-        } else {
-          const numBins = activeBins.length;
-          const binIndex = Math.min(
-            Math.max(0, Math.floor(((deltaX + 150) / 300) * numBins)),
-            numBins - 1
-          );
-          const targetBin = activeBins[binIndex] || activeBins[0];
-          executeThrow(targetBin);
         }
       }
     }
@@ -991,7 +946,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         tapCandidateRef.current = null;
         const moved = Math.hypot(e.clientX - candidate.x, e.clientY - candidate.y);
         const canWalk = !(envMode === 'TOWN' && worldMode === 'STATION_SORT');
-        if (moved < 12 && canWalk) {
+        if (moved < 12 && canWalk && !throwWasArmed) {
           engineRef.current.locomotion.createRaycastHandler(
             e.nativeEvent,
             mountRef.current,
@@ -1006,48 +961,55 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     activeTouchesRef.current.delete(e.pointerId);
     if (activeTouchesRef.current.size < 2) pinchStateRef.current = null;
     if (activeTouchesRef.current.size === 0) tapCandidateRef.current = null;
-    isDraggingThrowRef.current = false;
-    setDragStart(null);
-    setCurrentDrag(null);
+    mouseDownCandidateRef.current = null;
+    cancelThrowDrag();
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    if (engineRef.current) {
-      engineRef.current.cameraSystem.onWheel(e.nativeEvent);
-    }
+  // Safety net: if pointer capture ends while a throw drag is still armed
+  // (e.g. the pointer left the window), drop the drag so no phantom aiming
+  // state persists. On normal pointerup the drag is already cleared.
+  const handleLostPointerCapture = () => {
+    if (isDraggingThrowRef.current) cancelThrowDrag();
   };
+
+  // Wheel zoom must be registered non-passive (React's onWheel is passive, so
+  // the camera's preventDefault() used to throw). Only handled over the 3D
+  // canvas so scrollable modals keep their own wheel scrolling.
+  useEffect(() => {
+    const container = mountRef.current;
+    if (!container) return;
+    const onWheel = (e: WheelEvent) => {
+      if (e.target instanceof HTMLCanvasElement && engineRef.current) {
+        engineRef.current.cameraSystem.onWheel(e);
+      }
+    };
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => container.removeEventListener('wheel', onWheel);
+  }, []);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
   };
 
-  // Kitchen bins list from reference image
-  const kitchenBinList: { type: BinType; label: string; color: string; desc: string }[] = [
-    { type: 'wet', label: 'Wet (Compost)', color: 'bg-emerald-600', desc: 'Food waste' },
-    { type: 'dry', label: 'Dry (Recycle)', color: 'bg-blue-600', desc: 'Paper & plastic' },
-    { type: 'ewaste', label: 'E-Waste', color: 'bg-amber-500', desc: 'Electronics' },
-    { type: 'hazardous', label: 'Hazardous', color: 'bg-rose-600', desc: 'Chemicals' },
-  ];
-
   return (
     <div
       className={
         fullScreen
-          ? `relative w-full h-full select-none touch-none bg-slate-950 overflow-hidden ${className || ''}`
-          : `relative w-full h-[520px] md:h-[620px] rounded-3xl overflow-hidden shadow-retro-xl border-2 border-slate-900 select-none touch-none bg-slate-950 ${className || ''}`
+          ? `relative w-full h-full select-none touch-manipulation bg-slate-950 overflow-hidden ${className || ''}`
+          : `relative w-full h-[520px] md:h-[620px] rounded-3xl overflow-hidden shadow-retro-xl border-2 border-slate-900 select-none touch-manipulation bg-slate-950 ${className || ''}`
       }
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
-      onWheel={handleWheel}
+      onLostPointerCapture={handleLostPointerCapture}
       onContextMenu={handleContextMenu}
       ref={mountRef}
     >
       {/* =====================================================================
           TOP HEADER BAR: ENVIRONMENT & CAMERA CONTROLS
           ===================================================================== */}
-      <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between gap-2 flex-wrap pointer-events-none">
+      <div className="absolute top-2 sm:top-3 left-3 right-3 z-20 flex items-center justify-between gap-1.5 flex-wrap pointer-events-none">
         {/* Left: Top Bar Extras & Location Badge */}
         <div className="flex items-center gap-2 pointer-events-auto flex-wrap">
           {topBarExtrasLeft}
@@ -1072,7 +1034,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
               onClick={() => engineRef.current?.player.celebrate()}
               title="Cheer"
               aria-label="Cheer"
-              className="w-11 h-11 flex items-center justify-center bg-[#FDFBF7] border-2 border-slate-900 rounded-xl shadow-retro-sm text-lg transition-all active:translate-x-[1px] active:translate-y-[1px]"
+              className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center bg-[#FDFBF7] border-2 border-slate-900 rounded-xl shadow-retro-sm text-lg transition-all active:translate-x-[1px] active:translate-y-[1px]"
             >
               🎉
             </button>
@@ -1082,53 +1044,12 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
             <div className="flex items-center gap-1.5">
               {topBarExtrasRight}
             </div>
-          ) : envMode === 'KITCHEN' ? (
-            <div className="flex items-center bg-[#FDFBF7] border-2 border-slate-900 rounded-xl p-1 shadow-retro-sm gap-1">
-              <button
-                onClick={() => setKitchenCamMode('REFERENCE')}
-                title="Room View: Kitchen overview"
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-fun font-black transition-all ${
-                  kitchenCamMode === 'REFERENCE'
-                    ? 'bg-amber-300 text-slate-950 border border-slate-900'
-                    : 'text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                <Camera className="w-3.5 h-3.5" />
-                <span>Room View</span>
-              </button>
-
-              <button
-                onClick={() => setKitchenCamMode('FOLLOW')}
-                title="Follow Kai: Third-person follow camera"
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-fun font-black transition-all ${
-                  kitchenCamMode === 'FOLLOW'
-                    ? 'bg-amber-300 text-slate-950 border border-slate-900'
-                    : 'text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                <Footprints className="w-3.5 h-3.5" />
-                <span>Follow Kai</span>
-              </button>
-
-              <button
-                onClick={() => setKitchenCamMode('SORT')}
-                title="Sort Focus: Zoomed on table and bins"
-                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-fun font-black transition-all ${
-                  kitchenCamMode === 'SORT'
-                    ? 'bg-amber-300 text-slate-950 border border-slate-900'
-                    : 'text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                <Play className="w-3.5 h-3.5" />
-                <span>Sort Focus</span>
-              </button>
-            </div>
           ) : (
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setIsGalleryOpen(true)}
                 title="Inspect all 10 production 3D waste item components"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm bg-[#FDFBF7] hover:bg-emerald-50 text-slate-950 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 min-h-[40px] md:min-h-[44px] rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm bg-[#FDFBF7] hover:bg-emerald-50 text-slate-950 transition-all"
               >
                 <Box className="w-3.5 h-3.5 text-emerald-600" />
                 <span>3D Items (10)</span>
@@ -1136,7 +1057,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
 
               <button
                 onClick={() => onSetWorldMode(worldMode === 'EXPLORE' ? 'STATION_SORT' : 'EXPLORE')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm ${
+                className={`flex items-center gap-1.5 px-3 py-2 min-h-[40px] md:min-h-[44px] rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm ${
                   worldMode === 'EXPLORE' ? 'bg-amber-300 text-slate-950' : 'bg-emerald-400 text-slate-950'
                 }`}
               >
@@ -1152,21 +1073,23 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       {/* =====================================================================
           AIMING DRAG INDICATOR (Flick throw visualization)
           ===================================================================== */}
-      {dragStart && currentDrag && (
+      {isAiming && dragStartRef.current && currentDragRef.current && (
         <div className="absolute inset-0 pointer-events-none z-10">
           <svg className="w-full h-full">
             <line
-              x1={dragStart.x}
-              y1={dragStart.y}
-              x2={currentDrag.x}
-              y2={currentDrag.y}
+              ref={aimLineRef}
+              x1={dragStartRef.current.x}
+              y1={dragStartRef.current.y}
+              x2={currentDragRef.current.x}
+              y2={currentDragRef.current.y}
               stroke="#facc15"
               strokeWidth="5"
               strokeDasharray="8 8"
             />
             <circle
-              cx={currentDrag.x}
-              cy={currentDrag.y}
+              ref={aimCircleRef}
+              cx={currentDragRef.current.x}
+              cy={currentDragRef.current.y}
               r="14"
               fill="#facc15"
               stroke="#0f172a"
@@ -1196,33 +1119,21 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
           SOCIETY PICKUP PROMPT
           ===================================================================== */}
       {envMode === 'SOCIETY' && nearbyLitterItem && !currentItem && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30">
-          <div className="bg-[#FDFBF7]/95 border-2 border-emerald-500 shadow-retro px-4 py-2.5 rounded-2xl flex items-center gap-3">
-            <span className="text-xl animate-bounce">{nearbyLitterItem.icon}</span>
-            <div>
-              <div className="text-xs font-fun font-black text-slate-900">{nearbyLitterItem.name}</div>
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-30 max-w-[90vw]">
+          <div className="bg-[#FDFBF7]/95 border-2 border-emerald-500 shadow-retro px-3 py-1.5 rounded-2xl flex items-center gap-2">
+            <span className="text-lg shrink-0">{nearbyLitterItem.icon}</span>
+            <div className="min-w-0">
+              <div className="text-[11px] font-fun font-black text-slate-900 truncate">{nearbyLitterItem.name}</div>
               {!isCoarsePointer && (
                 <div className="text-[10px] text-slate-600">Press <kbd className="bg-slate-200 px-1 rounded">E</kbd> to pick up</div>
               )}
             </div>
             <button
               onClick={pickupNearestLitter}
-              className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-4 py-2.5 min-h-[44px] rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+              className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-3 py-1.5 min-h-[36px] rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px] shrink-0"
             >
               Pick up
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* =====================================================================
-          KITCHEN PROXIMITY INSPECTION SPEECH BUBBLE (Kai's observations)
-          ===================================================================== */}
-      {envMode === 'KITCHEN' && kitchenPrompt && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 animate-in fade-in slide-in-from-top-2 duration-150">
-          <div className="bg-[#FDFBF7] px-4 py-2 rounded-2xl border-2 border-slate-900 shadow-retro text-xs font-fun font-black text-slate-900 flex items-center gap-2">
-            <span className="p-1 bg-amber-300 rounded-lg border border-slate-900 text-xs">Kai</span>
-            <span>{kitchenPrompt}</span>
           </div>
         </div>
       )}
@@ -1291,37 +1202,6 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       )}
 
       {/* =====================================================================
-          KITCHEN BOTTOM INTERACTIVE CONTROLS & DIRECT SORT BUTTONS
-          ===================================================================== */}
-      {envMode === 'KITCHEN' && (
-        <div className="absolute bottom-3 left-0 right-0 px-4 flex flex-col items-center gap-2 z-20 pointer-events-none">
-          {/* Throw Hint */}
-          <div className="bg-[#FDFBF7]/95 px-3.5 py-1.5 rounded-xl border-2 border-slate-900 shadow-retro-sm text-[11px] font-fun font-bold text-slate-900 pointer-events-auto flex items-center gap-2">
-            <span>{isCoarsePointer ? '👆 Tap the ground to walk • Tap 🎉 to cheer!' : '🎮 Use WASD to walk Kai • Press Space to jump'}</span>
-            <span className="text-slate-400">|</span>
-            <span>👆 Tap any bin or drag to throw!</span>
-          </div>
-
-          {/* 4 Bins from the Reference Screenshot */}
-          <div className="flex items-center justify-center gap-2 flex-wrap pointer-events-auto">
-            {kitchenBinList.map((bin, idx) => (
-              <button
-                key={bin.type}
-                disabled={isThrowing}
-                onClick={() => executeThrow(bin.type)}
-                className={`${bin.color} hover:brightness-110 text-white font-fun font-black px-3 py-2 md:px-4 md:py-2.5 min-h-[44px] rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
-              >
-                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px]">
-                  {idx + 1}
-                </span>
-                <span>{bin.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* =====================================================================
           TOWN STATION_SORT BOTTOM CONTROLS
           ===================================================================== */}
       {envMode === 'TOWN' && worldMode === 'STATION_SORT' && (
@@ -1350,20 +1230,21 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
 
       {/* Floating Prompt for Nearby Scattered Map Items in Town */}
       {nearbyMapItem && worldMode === 'EXPLORE' && envMode === 'TOWN' && (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-30 bg-[#FDFBF7]/95 border-2 border-slate-900 shadow-retro px-4 py-2.5 rounded-2xl flex items-center gap-3 animate-bounce pointer-events-auto">
-          <Sparkles className="w-5 h-5 text-amber-500 shrink-0" />
-          <div>
-            <div className="text-xs font-fun font-black text-slate-950">Nearby waste: {nearbyMapItem.name}</div>
-            <div className="text-[10px] text-slate-600 font-medium">Click Collect to pick up for sorting</div>
+        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-30 bg-[#FDFBF7]/95 border-2 border-slate-900 shadow-retro px-3 py-1.5 rounded-2xl flex items-center gap-2 max-w-[90vw] pointer-events-auto">
+          <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
+          <div className="min-w-0">
+            <div className="text-[11px] font-fun font-black text-slate-950 truncate">Nearby waste: {nearbyMapItem.name}</div>
+            <div className="hidden sm:block text-[10px] text-slate-600 font-medium">Click Collect to pick up for sorting</div>
           </div>
           <button
             onClick={() => {
               if (engineRef.current) {
                 engineRef.current.mapItemManager.collectItem(nearbyMapItem.id);
+                lastMapItemIdRef.current = null;
                 setNearbyMapItem(null);
               }
             }}
-            className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-3.5 py-1.5 min-h-[44px] rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-3 py-1.5 min-h-[36px] rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px] shrink-0"
           >
             Collect
           </button>
