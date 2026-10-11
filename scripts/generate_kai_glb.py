@@ -1,25 +1,21 @@
 #!/usr/bin/env python3
 """
 generate_kai_glb.py
-Generates a textured 3D glTF 2.0 binary (.glb) model of Kai the Eco Hero,
-derived directly from the turnaround photo sheet (hero-model-sheet.png).
+Generates a simple flat-color 3D glTF 2.0 binary (.glb) model of Kai the Eco Hero.
+The model has no photo textures and no stickers. Every surface uses one solid color.
 
 Hierarchy:
   Kai (Root)
     └── BodyRoot (Position bobbing & root translation)
           ├── TorsoGroup
           │     ├── TorsoMesh (Yellow hoodie body)
-          │     ├── TorsoFront (Textured photo: kangaroo pocket, zipper, drawstrings)
-          │     ├── HoodieHem (Ribbed hem band)
+          │     ├── HoodieHem (Hem band)
           │     ├── HoodieCollar (Collar fold)
-          │     ├── DrawstringL / DrawstringR
           │     └── BackpackGroup
           │           ├── BackpackMesh (Olive green volume)
-          │           ├── BackpackBack (Textured photo: leaf eco badge & buckle)
-          │           └── BackpackFlap (Flap & straps)
+          │           └── BackpackFlap (Flap)
           ├── HeadPivot (Rotatable head for nodding / look-at)
-          │     ├── HeadMesh (Peach skin base)
-          │     ├── FaceFront (Textured photo: anime eyes, blush, cute smile)
+          │     ├── HeadMesh (Peach skin base, plain face)
           │     ├── EarL / EarR (Cute peach ears)
           │     ├── HairTop (Spiky volumetric hair crown)
           │     ├── HairBack (Layered hair volume)
@@ -39,7 +35,7 @@ Hierarchy:
           │     ├── KneeShin (Peach skin leg)
           │     ├── Sock (White athletic sock)
           │     └── SneakerGroup
-          │           ├── SneakerBody (Blue sneaker body with side logo)
+          │           ├── SneakerBody (Blue sneaker body)
           │           ├── SneakerSole (White rubber sole)
           │           └── SneakerToeCap (White toe bumper)
           └── RightLegPivot (Hip pivot, rotatable X)
@@ -48,7 +44,7 @@ Hierarchy:
                 ├── KneeShin (Peach skin leg)
                 ├── Sock (White athletic sock)
                 └── SneakerGroup
-                      ├── SneakerBody (Blue sneaker body with side logo)
+                      ├── SneakerBody (Blue sneaker body)
                       ├── SneakerSole (White rubber sole)
                       └── SneakerToeCap (White toe bumper)
 """
@@ -237,34 +233,6 @@ class GLTFBuilder:
             name
         )
 
-    def create_quad(self, width: float, height: float, material_idx: int, name: str, facing: str = '+Z') -> int:
-        hw, hh = width / 2, height / 2
-        if facing == '+Z':
-            verts = [[-hw, -hh, 0], [hw, -hh, 0], [hw, hh, 0], [-hw, hh, 0]]
-            norm = [0, 0, 1]
-        elif facing == '-Z':
-            verts = [[hw, -hh, 0], [-hw, -hh, 0], [-hw, hh, 0], [hw, hh, 0]]
-            norm = [0, 0, -1]
-        elif facing == '+X':
-            verts = [[0, -hh, -hw], [0, -hh, hw], [0, hh, hw], [0, hh, -hw]]
-            norm = [1, 0, 0]
-        else: # -X
-            verts = [[0, -hh, hw], [0, -hh, -hw], [0, hh, -hw], [0, hh, hw]]
-            norm = [-1, 0, 0]
-
-        normals = [norm, norm, norm, norm]
-        uvs = [[0, 1], [1, 1], [1, 0], [0, 0]]
-        indices = [0, 1, 2, 0, 2, 3]
-
-        return self.add_geometry(
-            np.array(verts, dtype=np.float32),
-            np.array(normals, dtype=np.float32),
-            np.array(uvs, dtype=np.float32),
-            np.array(indices, dtype=np.uint16),
-            material_idx,
-            name
-        )
-
     def create_cylinder(self, radius: float, height: float, material_idx: int, name: str, segments: int = 12) -> int:
         hh = height / 2
         verts = []
@@ -342,12 +310,15 @@ class GLTFBuilder:
             'nodes': self.nodes,
             'meshes': self.meshes,
             'materials': self.materials,
-            'textures': self.textures,
-            'images': gltf_images,
             'accessors': self.accessors,
             'bufferViews': self.buffer_views,
             'buffers': [{'byteLength': len(self.buffer_bytes)}]
         }
+
+        # Only declare textures and images when the model actually uses them
+        if gltf_images:
+            gltf['images'] = gltf_images
+            gltf['textures'] = self.textures
 
         json_bytes = json.dumps(gltf).encode('utf-8')
         json_pad = (4 - (len(json_bytes) % 4)) % 4
@@ -375,23 +346,7 @@ class GLTFBuilder:
 def build_kai_model(output_path: str):
     builder = GLTFBuilder()
 
-    # 1. Textures extracted directly from turnaround photos
-    tex_face_idx = builder.add_image('public/images/kai_tex_face.png')
-    tex_hoodie_idx = builder.add_image('public/images/kai_tex_hoodie_front.png')
-    tex_backpack_idx = builder.add_image('public/images/kai_tex_backpack.png')
-    tex_hair_idx = builder.add_image('public/images/kai_tex_hair.png')
-    tex_shorts_idx = builder.add_image('public/images/kai_tex_shorts.png')
-    tex_sneaker_idx = builder.add_image('public/images/kai_tex_sneaker.png')
-
-    # 2. PBR Materials
-    mat_face = builder.add_material('MatKaiFace', texture_idx=tex_face_idx, roughness=0.5, double_sided=True)
-    mat_hoodie_front = builder.add_material('MatKaiHoodieFront', texture_idx=tex_hoodie_idx, roughness=0.6, double_sided=True)
-    mat_backpack = builder.add_material('MatKaiBackpack', texture_idx=tex_backpack_idx, roughness=0.6, double_sided=True)
-    mat_hair_tex = builder.add_material('MatKaiHairTex', texture_idx=tex_hair_idx, roughness=0.7, double_sided=True)
-    mat_shorts_tex = builder.add_material('MatKaiShortsTex', texture_idx=tex_shorts_idx, roughness=0.7, double_sided=True)
-    mat_sneaker_tex = builder.add_material('MatKaiSneakerTex', texture_idx=tex_sneaker_idx, roughness=0.4, double_sided=True)
-
-    # Solid accent materials matching character turnaround
+    # 1. Flat-color PBR materials (no photo textures, no stickers)
     mat_skin = builder.add_material('MatSkin', base_color=(0.992, 0.886, 0.780, 1.0), roughness=0.55) # #fde2c7
     mat_hoodie_yellow = builder.add_material('MatHoodieYellow', base_color=(0.980, 0.800, 0.082, 1.0), roughness=0.65) # #facc15
     mat_hoodie_shade = builder.add_material('MatHoodieShade', base_color=(0.851, 0.467, 0.024, 1.0), roughness=0.65) # #d97706
@@ -400,32 +355,27 @@ def build_kai_model(output_path: str):
     mat_denim_blue = builder.add_material('MatDenimBlue', base_color=(0.114, 0.306, 0.847, 1.0), roughness=0.7) # #1d4ed8
     mat_denim_cuff = builder.add_material('MatDenimCuff', base_color=(0.231, 0.510, 0.965, 1.0), roughness=0.7) # #3b82f6
     mat_white = builder.add_material('MatWhite', base_color=(0.98, 0.98, 0.98, 1.0), roughness=0.3)
-    mat_string_white = builder.add_material('MatDrawstring', base_color=(1.0, 1.0, 1.0, 1.0), roughness=0.4)
 
     # -------------------------------------------------------------------------
-    # 3. MESHES
+    # 2. MESHES
     # -------------------------------------------------------------------------
     # Torso
     m_torso_box = builder.create_box(0.54, 0.48, 0.36, mat_hoodie_yellow, 'TorsoBox')
-    m_torso_front = builder.create_quad(0.52, 0.46, mat_hoodie_front, 'TorsoFrontQuad', facing='+Z')
     m_hoodie_hem = builder.create_box(0.55, 0.08, 0.37, mat_hoodie_shade, 'HoodieHemMesh')
     m_hoodie_collar = builder.create_box(0.44, 0.08, 0.38, mat_hoodie_yellow, 'HoodieCollarMesh')
-    m_drawstring = builder.create_cylinder(0.015, 0.22, mat_string_white, 'DrawstringMesh')
 
     # Backpack
     m_backpack_box = builder.create_box(0.42, 0.42, 0.16, mat_backpack_green, 'BackpackBox')
-    m_backpack_back = builder.create_quad(0.40, 0.40, mat_backpack, 'BackpackBackQuad', facing='-Z')
     m_backpack_flap = builder.create_box(0.43, 0.12, 0.17, mat_backpack_green, 'BackpackFlapMesh')
 
-    # Head & Face
+    # Head (plain face, no texture)
     m_head_box = builder.create_box(0.50, 0.50, 0.46, mat_skin, 'HeadBox')
-    m_face_front = builder.create_quad(0.48, 0.48, mat_face, 'FaceFrontQuad', facing='+Z')
     m_ear = builder.create_cylinder(0.06, 0.04, mat_skin, 'EarMesh')
 
     # Hair
-    m_hair_top = builder.create_box(0.54, 0.26, 0.50, mat_hair_tex, 'HairTopMesh')
+    m_hair_top = builder.create_box(0.54, 0.26, 0.50, mat_brown_hair, 'HairTopMesh')
     m_hair_back = builder.create_box(0.52, 0.38, 0.14, mat_brown_hair, 'HairBackMesh')
-    m_hair_bang = builder.create_box(0.14, 0.18, 0.06, mat_hair_tex, 'HairBangMesh')
+    m_hair_bang = builder.create_box(0.14, 0.18, 0.06, mat_brown_hair, 'HairBangMesh')
     m_hair_side = builder.create_box(0.08, 0.26, 0.12, mat_brown_hair, 'HairSideMesh')
 
     # Arms
@@ -435,44 +385,37 @@ def build_kai_model(output_path: str):
 
     # Shorts & Legs
     m_shorts_box = builder.create_box(0.20, 0.22, 0.22, mat_denim_blue, 'ShortsMesh')
-    m_shorts_front = builder.create_quad(0.19, 0.21, mat_shorts_tex, 'ShortsFrontQuad', facing='+Z')
     m_shorts_cuff = builder.create_box(0.21, 0.05, 0.23, mat_denim_cuff, 'ShortsCuffMesh')
     m_shin = builder.create_box(0.13, 0.22, 0.13, mat_skin, 'ShinMesh')
     m_sock = builder.create_box(0.14, 0.10, 0.14, mat_white, 'SockMesh')
 
     # Sneaker
     m_sneaker_box = builder.create_box(0.17, 0.14, 0.30, mat_denim_blue, 'SneakerBodyMesh')
-    m_sneaker_side = builder.create_quad(0.28, 0.13, mat_sneaker_tex, 'SneakerSideQuad', facing='+X')
     m_sneaker_sole = builder.create_box(0.19, 0.06, 0.33, mat_white, 'SneakerSoleMesh')
     m_sneaker_toe = builder.create_box(0.18, 0.08, 0.10, mat_white, 'SneakerToeMesh')
 
     # -------------------------------------------------------------------------
-    # 4. HIERARCHICAL NODES (Leaf-to-Root Assembly)
+    # 3. HIERARCHICAL NODES (Leaf-to-Root Assembly)
     # -------------------------------------------------------------------------
     # Torso leaf nodes
     n_torso_box = builder.add_node('TorsoBoxNode', mesh=m_torso_box, translation=[0, 0.95, 0])
-    n_torso_front = builder.add_node('TorsoFrontNode', mesh=m_torso_front, translation=[0, 0.95, 0.182])
     n_hoodie_hem = builder.add_node('HoodieHemNode', mesh=m_hoodie_hem, translation=[0, 0.70, 0])
     n_hoodie_collar = builder.add_node('HoodieCollarNode', mesh=m_hoodie_collar, translation=[0, 1.20, 0])
-    n_ds_l = builder.add_node('DrawstringL', mesh=m_drawstring, translation=[-0.08, 1.05, 0.19])
-    n_ds_r = builder.add_node('DrawstringR', mesh=m_drawstring, translation=[0.08, 1.05, 0.19])
 
     # Backpack leaf nodes
     n_bp_box = builder.add_node('BackpackBoxNode', mesh=m_backpack_box, translation=[0, 0.96, -0.26])
-    n_bp_back = builder.add_node('BackpackBackNode', mesh=m_backpack_back, translation=[0, 0.96, -0.342])
     n_bp_flap = builder.add_node('BackpackFlapNode', mesh=m_backpack_flap, translation=[0, 1.15, -0.26])
 
     # Assemble BackpackGroup
-    n_backpack_group = builder.add_node('Backpack', children=[n_bp_box, n_bp_back, n_bp_flap])
+    n_backpack_group = builder.add_node('Backpack', children=[n_bp_box, n_bp_flap])
 
     # Assemble TorsoGroup
     n_torso_group = builder.add_node('TorsoGroup', children=[
-        n_torso_box, n_torso_front, n_hoodie_hem, n_hoodie_collar, n_ds_l, n_ds_r, n_backpack_group
+        n_torso_box, n_hoodie_hem, n_hoodie_collar, n_backpack_group
     ])
 
     # Head and Hair leaf nodes
     n_head_box = builder.add_node('HeadBoxNode', mesh=m_head_box, translation=[0, 0.22, 0])
-    n_face_front = builder.add_node('FaceFrontNode', mesh=m_face_front, translation=[0, 0.22, 0.232])
     n_ear_l = builder.add_node('EarL', mesh=m_ear, translation=[-0.26, 0.22, 0], rotation=[0, 0, 0.7071, 0.7071])
     n_ear_r = builder.add_node('EarR', mesh=m_ear, translation=[0.26, 0.22, 0], rotation=[0, 0, 0.7071, 0.7071])
 
@@ -487,7 +430,7 @@ def build_kai_model(output_path: str):
 
     # Assemble HeadPivot (Pivot at y=1.20)
     n_head_pivot = builder.add_node('HeadPivot', translation=[0, 1.22, 0], children=[
-        n_head_box, n_face_front, n_ear_l, n_ear_r, n_hair_top, n_hair_back,
+        n_head_box, n_ear_l, n_ear_r, n_hair_top, n_hair_back,
         n_bang_1, n_bang_2, n_bang_3, n_hair_s_l, n_hair_s_r
     ])
 
@@ -513,24 +456,22 @@ def build_kai_model(output_path: str):
         prefix = 'L' if is_left else 'R'
         
         n_sh_box = builder.add_node(f'{prefix}_ShortsBox', mesh=m_shorts_box, translation=[0, -0.11, 0])
-        n_sh_front = builder.add_node(f'{prefix}_ShortsFront', mesh=m_shorts_front, translation=[0, -0.11, 0.112])
         n_sh_cuff = builder.add_node(f'{prefix}_ShortsCuff', mesh=m_shorts_cuff, translation=[0, -0.22, 0])
         n_shin = builder.add_node(f'{prefix}_Shin', mesh=m_shin, translation=[0, -0.32, 0])
         n_sock = builder.add_node(f'{prefix}_Sock', mesh=m_sock, translation=[0, -0.44, 0])
         
         # Sneaker
         n_snk_box = builder.add_node(f'{prefix}_SnkBox', mesh=m_sneaker_box, translation=[0, -0.54, 0.04])
-        n_snk_side = builder.add_node(f'{prefix}_SnkSide', mesh=m_sneaker_side, translation=[side_sign * 0.087, -0.54, 0.04])
         n_snk_sole = builder.add_node(f'{prefix}_SnkSole', mesh=m_sneaker_sole, translation=[0, -0.62, 0.04])
         n_snk_toe = builder.add_node(f'{prefix}_SnkToe', mesh=m_sneaker_toe, translation=[0, -0.58, 0.17])
         
         n_sneaker_group = builder.add_node(f'{prefix}_Sneaker', children=[
-            n_snk_box, n_snk_side, n_snk_sole, n_snk_toe
+            n_snk_box, n_snk_sole, n_snk_toe
         ])
 
         pivot_name = 'LeftLegPivot' if is_left else 'RightLegPivot'
         return builder.add_node(pivot_name, translation=[side_sign * 0.15, 0.65, 0], children=[
-            n_sh_box, n_sh_front, n_sh_cuff, n_shin, n_sock, n_sneaker_group
+            n_sh_box, n_sh_cuff, n_shin, n_sock, n_sneaker_group
         ])
 
     n_left_leg_pivot = create_leg_tree(True)

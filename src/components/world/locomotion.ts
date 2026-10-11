@@ -19,11 +19,11 @@ export interface LocomotionEngine {
  * Game keys must stand down while the player is typing.
  */
 export function isTypingTarget(target: EventTarget | null): boolean {
-  return (
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement ||
-    (target instanceof HTMLElement && target.isContentEditable)
-  );
+  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return true;
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+  const attr = target.getAttribute('contenteditable');
+  return attr !== null && attr !== 'false';
 }
 
 export function createLocomotionEngine(
@@ -93,9 +93,28 @@ export function createLocomotionEngine(
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
 
-  // 3. Click-to-Move Raycast Handler (Disabled per tap-and-go removal)
-  const createRaycastHandler = (_event: MouseEvent | PointerEvent, _container: HTMLElement, _camera: THREE.Camera) => {
-    // Tap-and-go feature disabled
+  // 3. Tap-to-Move Raycast Handler (touch: tap the ground to walk there)
+  const raycaster = new THREE.Raycaster();
+  const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+  const createRaycastHandler = (event: MouseEvent | PointerEvent, container: HTMLElement, camera: THREE.Camera) => {
+    const rect = container.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const ndcX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const ndcY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
+
+    const hit = new THREE.Vector3();
+    if (!raycaster.ray.intersectPlane(groundPlane, hit)) return;
+
+    clickDestination = new THREE.Vector3(
+      Math.max(bounds.minX, Math.min(bounds.maxX, hit.x)),
+      0,
+      Math.max(bounds.minZ, Math.min(bounds.maxZ, hit.z))
+    );
+    destinationRing.position.set(clickDestination.x, 0, clickDestination.z);
+    destinationRing.visible = true;
   };
 
   // 4. Collision Resolution

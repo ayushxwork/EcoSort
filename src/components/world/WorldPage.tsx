@@ -18,6 +18,7 @@ import { CleanlinessMeter } from '../game/CleanlinessMeter';
 import { EcoLensOverlay, EcoLensButton } from '../game/EcoLensOverlay';
 import { MissionResultsModal, MissionError } from '../game/MissionResultsModal';
 import { useCountdownTimer } from '../../hooks/useCountdownTimer';
+import { useCoarsePointer, useIsPortrait } from '../../hooks/useMobileInput';
 import {
   INITIAL_ECO_LENS_STATE,
   activateLens,
@@ -99,7 +100,10 @@ export const WorldPage: React.FC<WorldPageProps> = ({
     `Welcome! Start in ${currentLevel.place}. Sort the waste.`
   );
   const [isPositiveFeedback, setIsPositiveFeedback] = useState<boolean>(true);
-  const [isMascotCollapsed, setIsMascotCollapsed] = useState<boolean>(false);
+  // Touch devices start with the mascot collapsed so it never covers the view
+  const isCoarsePointer = useCoarsePointer();
+  const isPortrait = useIsPortrait();
+  const [isMascotCollapsed, setIsMascotCollapsed] = useState<boolean>(isCoarsePointer);
 
   // ── Modals ──────────────────────────────────────────────────────────────────
   const [showQuiz, setShowQuiz] = useState<boolean>(false);
@@ -522,11 +526,11 @@ export const WorldPage: React.FC<WorldPageProps> = ({
   const topBarExtrasLeft = (
     <div className="flex items-center gap-2">
       {onExit && (
-        <button
-          onClick={onExit}
-          title="Exit to menu"
-          className="tactile-btn flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-100 text-slate-950 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
-        >
+          <button
+            onClick={onExit}
+            title="Exit to menu"
+            className="tactile-btn flex items-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] bg-white hover:bg-slate-100 text-slate-950 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+          >
           <ArrowLeft className="w-4 h-4 text-slate-950" />
           <span className="hidden sm:inline">Exit</span>
         </button>
@@ -536,10 +540,10 @@ export const WorldPage: React.FC<WorldPageProps> = ({
 
   // ── HUD: CENTER ─────────────────────────────────────────────────────────────
   const topBarCenter = (
-    <div className="hidden lg:flex items-center gap-2 bg-[#FDFBF7]/95 border-2 border-slate-900 rounded-2xl px-3 py-1.5 shadow-retro text-slate-900 backdrop-blur-sm flex-wrap">
+    <div className="flex items-center gap-2 bg-[#FDFBF7]/95 border-2 border-slate-900 rounded-2xl px-2 sm:px-3 py-1.5 shadow-retro text-slate-900 backdrop-blur-sm flex-wrap min-w-0">
 
       {/* Level name */}
-      <span className="text-[11px] font-fun font-black text-slate-700 uppercase">
+      <span className="hidden lg:inline-block text-[11px] font-fun font-black text-slate-700 uppercase">
         {currentLevel.name}
       </span>
 
@@ -622,7 +626,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={() => setShowLevelSelect(true)}
         title="View missions"
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
       >
         <Map className="w-3.5 h-3.5 text-emerald-600" />
         <span className="hidden sm:inline">Missions</span>
@@ -632,7 +636,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={() => setShowEcopedia(true)}
         title="View Eco-pedia cards"
-        className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl text-xs font-fun font-black transition-all active:translate-x-[1px] active:translate-y-[1px]"
       >
         <BookOpen className="w-3.5 h-3.5 text-teal-600" />
         <span className="hidden md:inline">Cards ({profile.unlockedCards.length})</span>
@@ -642,7 +646,7 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={handleToggleSound}
         title={soundEnabled ? 'Mute sound' : 'Enable sound'}
-        className="p-2 bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
       >
         {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600" /> : <VolumeX className="w-4 h-4 text-rose-600" />}
       </button>
@@ -651,27 +655,29 @@ export const WorldPage: React.FC<WorldPageProps> = ({
       <button
         onClick={handleToggleSlowMode}
         title={slowMode ? 'Normal speed' : 'Slow mode'}
-        className={`px-2.5 py-1.5 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px] ${
+        className={`min-h-[44px] min-w-[44px] flex items-center justify-center px-2.5 py-1.5 rounded-xl text-xs font-fun font-black border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px] ${
           slowMode ? 'bg-amber-300 text-slate-950' : 'bg-white text-slate-700 hover:bg-slate-100'
         }`}
       >
         🐢
       </button>
 
-      {/* Fullscreen */}
-      <button
-        onClick={handleToggleFullscreen}
-        title={isFullscreen ? 'Exit fullscreen' : 'Full desktop view'}
-        className="p-2 bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
-      >
-        {isFullscreen ? <Minimize2 className="w-4 h-4 text-slate-700" /> : <Maximize2 className="w-4 h-4 text-slate-700" />}
-      </button>
+      {/* Fullscreen (not supported on iPhone Safari) */}
+      {typeof document !== 'undefined' && 'requestFullscreen' in document.documentElement && (
+        <button
+          onClick={handleToggleFullscreen}
+          title={isFullscreen ? 'Exit fullscreen' : 'Full desktop view'}
+          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
+        >
+          {isFullscreen ? <Minimize2 className="w-4 h-4 text-slate-700" /> : <Maximize2 className="w-4 h-4 text-slate-700" />}
+        </button>
+      )}
 
       {onOpenTeacherReport && (
         <button
           onClick={onOpenTeacherReport}
           title="Teacher report"
-          className="p-2 bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
+          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-white hover:bg-slate-100 text-slate-900 border-2 border-slate-900 shadow-retro-sm rounded-xl transition-all active:translate-x-[1px] active:translate-y-[1px]"
         >
           <BarChart2 className="w-4 h-4 text-blue-600" />
         </button>
@@ -681,7 +687,15 @@ export const WorldPage: React.FC<WorldPageProps> = ({
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-slate-950 z-40 select-none">
+    <div className="fixed inset-0 w-screen h-dvh overflow-hidden bg-slate-950 z-40 select-none safe-area-shell">
+      {/* Touch devices must play in landscape */}
+      {isCoarsePointer && isPortrait && (
+        <div className="absolute inset-0 z-50 bg-[#FDFBF7] flex flex-col items-center justify-center gap-4 px-8 text-center">
+          <span className="text-6xl animate-bounce">📱</span>
+          <div className="text-2xl font-fun font-black text-slate-950">Turn your device sideways</div>
+          <div className="text-sm font-fun text-slate-700">The game plays in landscape.</div>
+        </div>
+      )}
       <WorldCanvas
         fullScreen={true}
         currentLevelId={currentLevelId}

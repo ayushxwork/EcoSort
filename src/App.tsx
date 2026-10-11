@@ -20,7 +20,7 @@ export function App() {
         <Navbar currentView={currentView} onNavigate={setCurrentView} />
       )}
 
-      <main className={currentView === 'game' ? 'w-screen h-screen overflow-hidden' : 'flex-1 pt-20 sm:pt-24'}>
+      <main className={currentView === 'game' ? 'w-screen h-dvh overflow-hidden' : 'flex-1 pt-20 sm:pt-24'}>
         {currentView === 'landing' && (
           <LandingPage
             onStartGame={() => setCurrentView('game')}

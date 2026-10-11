@@ -1,0 +1,19 @@
+{
+  "name": "EcoSort Heroes",
+  "short_name": "EcoSort",
+  "description": "Sort waste, clean the town, and learn recycling with Kai.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "images/hero-avatar.png",
+      "sizes": "290x290",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

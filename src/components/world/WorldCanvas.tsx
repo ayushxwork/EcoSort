@@ -7,8 +7,9 @@ import { createHomeKitchenScene, HomeKitchenSceneResult } from './homeKitchenSce
 import { createSocietyScene, SocietySceneResult } from './societyScene';
 import { createLitterScatter, LitterScatterSystem } from './litterScatter';
 import { createPlayerCharacter, PlayerCharacter } from './playerCharacter';
-import { createLocomotionEngine, LocomotionEngine } from './locomotion';
-import { createThirdPersonCamera, ThirdPersonCameraSystem } from './thirdPersonCamera';
+import { createLocomotionEngine, LocomotionEngine, isTypingTarget } from './locomotion';
+import { createThirdPersonCamera, ThirdPersonCameraSystem, pinchZoomDelta, pinchPitchDelta } from './thirdPersonCamera';
+import { useCoarsePointer } from '../../hooks/useMobileInput';
 import { LEVEL_STATIONS } from './levelStations';
 import {
   Compass,
@@ -96,6 +97,12 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   const [currentDrag, setCurrentDrag] = useState<{ x: number; y: number } | null>(null);
   const isDraggingThrowRef = useRef(false);
 
+  // Touch input state (tap-to-move + two-finger pinch zoom/pitch)
+  const isCoarsePointer = useCoarsePointer();
+  const activeTouchesRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchStateRef = useRef<{ dist: number; midY: number } | null>(null);
+  const tapCandidateRef = useRef<{ x: number; y: number } | null>(null);
+
   // Society pickup prompt
   const [nearbyLitterItem, setNearbyLitterItem] = useState<ItemData | null>(null);
   // Stable ref for onPickupSocietyItem so the render loop can call it without stale closure
@@ -133,6 +140,17 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
     cleanup: () => void;
   } | null>(null);
 
+  // Shared litter pickup (used by E key and the touch "Pick up" button)
+  const pickupNearestLitter = () => {
+    const litter = engineRef.current?.litter;
+    if (!litter || !engineRef.current) return;
+    const playerPos = engineRef.current.locomotion.getPosition();
+    const nearest = litter.getNearestPickupItem(playerPos, 1.5);
+    if (nearest && !litter.getHeldItem()) {
+      litter.pickUp(nearest);
+    }
+  };
+
   // Synchronize environment mode on level change
   useEffect(() => {
     if (currentLevelId === 1) {
@@ -165,14 +183,14 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
 
     // 2. Renderer
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: !isCoarsePointer,
       alpha: false,
       powerPreference: 'high-performance',
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCoarsePointer ? 1.5 : 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = isCoarsePointer ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     container.appendChild(renderer.domElement);
@@ -432,19 +450,12 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
 
     // Keyboard shortcut handler
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isTypingTarget(e.target)) return; // typing in Ask Eco / any field
       const key = e.key.toLowerCase();
       if (key === 'e') {
         if (engineRef.current?.activeEnv === 'SOCIETY') {
           // Pick up nearest litter item in society mode
-          const litter = engineRef.current?.litter;
-          if (!litter) return;
-          const playerPos = engineRef.current.locomotion.getPosition();
-          const nearest = litter.getNearestPickupItem(playerPos, 1.5);
-          if (nearest && !litter.getHeldItem()) {
-            litter.pickUp(nearest);
-            // notify parent (captured via closure ref-safe callback)
-            // handled in renderLoop + pickupCallbackRef below
-          }
+          pickupNearestLitter();
         } else if (worldMode === 'EXPLORE' && isNearStation && envMode === 'TOWN') {
           onSetWorldMode('STATION_SORT');
         } else if (worldMode === 'STATION_SORT' && envMode === 'TOWN') {
@@ -527,8 +538,19 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
 
       locomotion.setObstacles(society ? society.obstacles : []);
       locomotion.setBounds(-11, 11, -9, 7);
-      locomotion.setPosition(new THREE.Vector3(0, 0, 4));
+      const societySpawn = new THREE.Vector3(0, 0, 4);
+      locomotion.setPosition(societySpawn);
       cameraSystem.setDistance(10.0);
+
+      // Spawn facing the dustbin row so the mission bins are in front of Kai
+      if (society) {
+        const spawnFacing = Math.atan2(
+          society.binRowCenter.x - societySpawn.x,
+          society.binRowCenter.z - societySpawn.z
+        );
+        player.setFacingAngle(spawnFacing, 1.0);
+        cameraSystem.setOrbit(spawnFacing + Math.PI);
+      }
     } else if (envMode === 'KITCHEN') {
       // Remove city/society and add kitchen
       scene.remove(city.cityGroup);
@@ -690,7 +712,8 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       engineRef.current.society.litterSpawnPoints,
       engineRef.current.society.hiddenSpawnPoints,
       engineRef.current.society.societyGroup,
-      12
+      12,
+      engineRef.current.society.pinnedLitterSpots
     );
     engineRef.current.litter = newLitter;
   }, [societyItemPool]);
@@ -849,6 +872,27 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       return;
     }
 
+    // Touch bookkeeping: remember the finger for tap detection;
+    // a second finger switches the gesture to pinch zoom/pitch.
+    // Only track when the touch starts on the 3D scene, not on HUD buttons.
+    if (e.pointerType === 'touch' && e.target instanceof HTMLCanvasElement) {
+      const touches = activeTouchesRef.current;
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.size === 2) {
+        const pts = [...touches.values()];
+        pinchStateRef.current = {
+          dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+          midY: (pts[0].y + pts[1].y) / 2,
+        };
+        tapCandidateRef.current = null; // pinch is not a tap
+        isDraggingThrowRef.current = false;
+        setDragStart(null);
+        setCurrentDrag(null);
+        return;
+      }
+      tapCandidateRef.current = { x: e.clientX, y: e.clientY };
+    }
+
     if (e.button === 0) {
       // Left click
       if (envMode === 'KITCHEN') {
@@ -874,6 +918,23 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!engineRef.current || !mountRef.current) return;
     engineRef.current.cameraSystem.onPointerMove(e.nativeEvent);
+
+    // Two-finger pinch: zoom + pitch
+    if (e.pointerType === 'touch') {
+      const touches = activeTouchesRef.current;
+      if (touches.has(e.pointerId)) {
+        touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      }
+      if (touches.size >= 2 && pinchStateRef.current) {
+        const pts = [...touches.values()].slice(0, 2);
+        const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        const midY = (pts[0].y + pts[1].y) / 2;
+        engineRef.current.cameraSystem.zoomBy(pinchZoomDelta(pinchStateRef.current.dist, dist));
+        engineRef.current.cameraSystem.adjustPitch(pinchPitchDelta(pinchStateRef.current.midY, midY));
+        pinchStateRef.current = { dist, midY };
+        return;
+      }
+    }
 
     if (isDraggingThrowRef.current) {
       const rect = mountRef.current.getBoundingClientRect();
@@ -918,6 +979,36 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         }
       }
     }
+
+    // Touch: fire tap-to-move when one finger taps (no drag, no pinch)
+    if (e.pointerType === 'touch') {
+      const touches = activeTouchesRef.current;
+      touches.delete(e.pointerId);
+      if (touches.size < 2) pinchStateRef.current = null;
+
+      const candidate = tapCandidateRef.current;
+      if (touches.size === 0 && candidate) {
+        tapCandidateRef.current = null;
+        const moved = Math.hypot(e.clientX - candidate.x, e.clientY - candidate.y);
+        const canWalk = !(envMode === 'TOWN' && worldMode === 'STATION_SORT');
+        if (moved < 12 && canWalk) {
+          engineRef.current.locomotion.createRaycastHandler(
+            e.nativeEvent,
+            mountRef.current,
+            engineRef.current.cameraSystem.camera
+          );
+        }
+      }
+    }
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent) => {
+    activeTouchesRef.current.delete(e.pointerId);
+    if (activeTouchesRef.current.size < 2) pinchStateRef.current = null;
+    if (activeTouchesRef.current.size === 0) tapCandidateRef.current = null;
+    isDraggingThrowRef.current = false;
+    setDragStart(null);
+    setCurrentDrag(null);
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -948,6 +1039,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       onWheel={handleWheel}
       onContextMenu={handleContextMenu}
       ref={mountRef}
@@ -975,6 +1067,16 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
 
         {/* Right: Camera Angle Controls + Extras */}
         <div className="flex items-center gap-1.5 pointer-events-auto flex-wrap">
+          {isCoarsePointer && (
+            <button
+              onClick={() => engineRef.current?.player.celebrate()}
+              title="Cheer"
+              aria-label="Cheer"
+              className="w-11 h-11 flex items-center justify-center bg-[#FDFBF7] border-2 border-slate-900 rounded-xl shadow-retro-sm text-lg transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            >
+              🎉
+            </button>
+          )}
           {envMode === 'SOCIETY' ? (
             // Society mode: minimal top-right controls
             <div className="flex items-center gap-1.5">
@@ -1094,13 +1196,21 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
           SOCIETY PICKUP PROMPT
           ===================================================================== */}
       {envMode === 'SOCIETY' && nearbyLitterItem && !currentItem && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 animate-bounce pointer-events-none">
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-30">
           <div className="bg-[#FDFBF7]/95 border-2 border-emerald-500 shadow-retro px-4 py-2.5 rounded-2xl flex items-center gap-3">
-            <span className="text-xl">{nearbyLitterItem.icon}</span>
+            <span className="text-xl animate-bounce">{nearbyLitterItem.icon}</span>
             <div>
               <div className="text-xs font-fun font-black text-slate-900">{nearbyLitterItem.name}</div>
-              <div className="text-[10px] text-slate-600">Press <kbd className="bg-slate-200 px-1 rounded">E</kbd> to pick up</div>
+              {!isCoarsePointer && (
+                <div className="text-[10px] text-slate-600">Press <kbd className="bg-slate-200 px-1 rounded">E</kbd> to pick up</div>
+              )}
             </div>
+            <button
+              onClick={pickupNearestLitter}
+              className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-4 py-2.5 min-h-[44px] rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            >
+              Pick up
+            </button>
           </div>
         </div>
       )}
@@ -1128,9 +1238,11 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
           >
             <span>Enter Mission {nearestStation.id}: {nearestStation.name}</span>
             <ArrowRight className="w-5 h-5 stroke-slate-950" />
-            <span className="bg-slate-950 text-white text-[10px] px-2 py-0.5 rounded-lg border border-slate-900">
-              Press E
-            </span>
+            {!isCoarsePointer && (
+              <span className="bg-slate-950 text-white text-[10px] px-2 py-0.5 rounded-lg border border-slate-900">
+                Press E
+              </span>
+            )}
           </button>
         </div>
       )}
@@ -1161,7 +1273,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
                   key={binType}
                   disabled={isThrowing}
                   onClick={() => executeThrow(binType)}
-                  className={`${bin.color} hover:brightness-110 text-white font-fun font-black px-3.5 py-2 md:px-5 md:py-2.5 rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
+                  className={`${bin.color} hover:brightness-110 text-white font-fun font-black px-3.5 py-2 md:px-5 md:py-2.5 min-h-[44px] rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
                 >
                   <span>{bin.label}</span>
                 </button>
@@ -1174,7 +1286,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
       {/* Society: walk hint when not holding anything */}
       {envMode === 'SOCIETY' && !currentItem && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 bg-[#FDFBF7]/90 border-2 border-slate-900 shadow-retro-sm rounded-xl px-4 py-1.5 text-[11px] font-fun font-black text-slate-900 pointer-events-none flex items-center gap-2">
-          <span>🎮 Walk with WASD • Approach litter and press E to pick up!</span>
+          <span>{isCoarsePointer ? '👆 Tap the ground to walk • Tap Pick up to take litter!' : '🎮 Walk with WASD • Approach litter and press E to pick up!'}</span>
         </div>
       )}
 
@@ -1185,7 +1297,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
         <div className="absolute bottom-3 left-0 right-0 px-4 flex flex-col items-center gap-2 z-20 pointer-events-none">
           {/* Throw Hint */}
           <div className="bg-[#FDFBF7]/95 px-3.5 py-1.5 rounded-xl border-2 border-slate-900 shadow-retro-sm text-[11px] font-fun font-bold text-slate-900 pointer-events-auto flex items-center gap-2">
-            <span>🎮 Use WASD to walk Kai • Press Space to jump</span>
+            <span>{isCoarsePointer ? '👆 Tap the ground to walk • Tap 🎉 to cheer!' : '🎮 Use WASD to walk Kai • Press Space to jump'}</span>
             <span className="text-slate-400">|</span>
             <span>👆 Tap any bin or drag to throw!</span>
           </div>
@@ -1197,7 +1309,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
                 key={bin.type}
                 disabled={isThrowing}
                 onClick={() => executeThrow(bin.type)}
-                className={`${bin.color} hover:brightness-110 text-white font-fun font-black px-3 py-2 md:px-4 md:py-2.5 rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
+                className={`${bin.color} hover:brightness-110 text-white font-fun font-black px-3 py-2 md:px-4 md:py-2.5 min-h-[44px] rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
               >
                 <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px]">
                   {idx + 1}
@@ -1226,7 +1338,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
                   key={binType}
                   disabled={isThrowing}
                   onClick={() => executeThrow(binType)}
-                  className={`${bin.color} hover:brightness-105 text-white font-fun font-black px-3.5 py-2 md:px-5 md:py-2.5 rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
+                  className={`${bin.color} hover:brightness-105 text-white font-fun font-black px-3.5 py-2 md:px-5 md:py-2.5 min-h-[44px] rounded-xl shadow-retro-sm border-2 border-slate-900 transition-all flex items-center gap-1.5 text-xs md:text-sm disabled:opacity-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
                 >
                   <span>{bin.label}</span>
                 </button>
@@ -1251,7 +1363,7 @@ export const WorldCanvas: React.FC<WorldCanvasProps> = ({
                 setNearbyMapItem(null);
               }
             }}
-            className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-3.5 py-1.5 rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
+            className="bg-emerald-500 hover:bg-emerald-400 text-white font-fun font-black text-xs px-3.5 py-1.5 min-h-[44px] rounded-xl border-2 border-slate-900 shadow-retro-sm transition-all active:translate-x-[1px] active:translate-y-[1px]"
           >
             Collect
           </button>

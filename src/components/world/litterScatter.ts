@@ -7,6 +7,7 @@
 
 import * as THREE from 'three';
 import { ItemData } from '../../types/game';
+import { PinnedLitterSpot } from './types';
 import { createItemMesh, disposeItemMesh } from './items/createItemMesh';
 
 export interface ScatteredItem {
@@ -52,13 +53,16 @@ function shuffle<T>(arr: T[]): T[] {
  * @param hiddenPoints    – THREE.Vector3 positions for hidden litter
  * @param parentGroup     – THREE.Group to add item meshes into
  * @param totalCount      – How many items to scatter (default 12)
+ * @param pinnedSpots     – Optional fixed item types at fixed positions; placed
+ *                          first, before the random fill
  */
 export function createLitterScatter(
   itemPool: ItemData[],
   visiblePoints: THREE.Vector3[],
   hiddenPoints: THREE.Vector3[],
   parentGroup: THREE.Group,
-  totalCount = 12
+  totalCount = 12,
+  pinnedSpots: PinnedLitterSpot[] = []
 ): LitterScatterSystem {
   const itemsGroup = new THREE.Group();
   itemsGroup.name = 'litter_scatter';
@@ -67,23 +71,7 @@ export function createLitterScatter(
   const scattered: ScatteredItem[] = [];
   let heldItem: ScatteredItem | null = null;
 
-  // ── Sample items from pool ensuring each bin type appears ──────────────
-  const pool = shuffle([...itemPool]);
-  const selected = pool.slice(0, totalCount);
-
-  // ── Spread across visible + hidden spawn points ─────────────────────────
-  const visPoints = shuffle([...visiblePoints]);
-  const hidPoints = shuffle([...hiddenPoints]);
-
-  const hiddenCount = Math.min(hidPoints.length, 3);
-  const visibleCount = totalCount - hiddenCount;
-
-  selected.forEach((itemData, i) => {
-    const isHidden = i >= visibleCount;
-    const spawnPos = isHidden
-      ? (hidPoints[i - visibleCount] ?? visPoints[i] ?? new THREE.Vector3(0, 0.05, 0))
-      : (visPoints[i] ?? new THREE.Vector3(i * 1.5 - 5, 0.05, 0));
-
+  function placeItem(itemData: ItemData, spawnPos: THREE.Vector3, isHidden: boolean) {
     const mesh = createItemMesh(itemData.modelType, {
       scale: 0.85,
       castShadow: true,
@@ -127,6 +115,45 @@ export function createLitterScatter(
       isInBin: false,
       wrongAttempts: 0,
     });
+  }
+
+  // ── Pinned items: fixed type at a fixed spot (skip unknown ids) ─────────
+  const pinnedIds = new Set<string>();
+  const pinnedPlacements: { itemData: ItemData; pos: THREE.Vector3 }[] = [];
+  for (const spot of pinnedSpots) {
+    const match = itemPool.find((i) => i.id === spot.itemId);
+    if (match && !pinnedIds.has(match.id)) {
+      pinnedIds.add(match.id);
+      pinnedPlacements.push({ itemData: match, pos: spot.position });
+    }
+  }
+
+  // ── Free fill: hidden points first, then visible points ─────────────────
+  const visPoints = shuffle([...visiblePoints]);
+  const hidPoints = shuffle([...hiddenPoints]);
+
+  const hiddenCount = Math.min(hidPoints.length, 3);
+  const visibleCount = Math.max(0, totalCount - pinnedPlacements.length - hiddenCount);
+  const freeCount = hiddenCount + visibleCount;
+
+  // Sample from the pool, excluding pinned item types so the authored spots stay distinct
+  let freeItems = shuffle(itemPool.filter((i) => !pinnedIds.has(i.id))).slice(0, freeCount);
+  if (freeItems.length < freeCount) {
+    // Pool ran short — top up from the full pool (duplicates allowed)
+    const topUp = shuffle([...itemPool]).slice(0, freeCount - freeItems.length);
+    freeItems = freeItems.concat(topUp);
+  }
+
+  pinnedPlacements.forEach(({ itemData, pos }) => placeItem(itemData, pos, false));
+
+  freeItems.slice(0, visibleCount).forEach((itemData, i) => {
+    const spawnPos = visPoints[i] ?? new THREE.Vector3(i * 1.5 - 5, 0.05, 0);
+    placeItem(itemData, spawnPos, false);
+  });
+
+  freeItems.slice(visibleCount).forEach((itemData, i) => {
+    const spawnPos = hidPoints[i] ?? visPoints[i] ?? new THREE.Vector3(0, 0.05, 0);
+    placeItem(itemData, spawnPos, true);
   });
 
   // ── Hover/rotation animation state ────────────────────────────────────────
