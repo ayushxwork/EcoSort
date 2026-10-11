@@ -24,10 +24,10 @@
     "semantic_hash": "675d7bfce430740bc3292172c9189429"
   },
   "package.json": {
-    "mtime": 1791700629.9574645,
-    "seen": 1791701625.0678332,
-    "ast_hash": "5c89e7cc8e8ee63565f501ce0ea53ec9",
-    "semantic_hash": "5c89e7cc8e8ee63565f501ce0ea53ec9"
+    "mtime": 1791713500.2110527,
+    "seen": 1791715444.615608,
+    "ast_hash": "d91c3aeee8b69d683fbeba636954b8ff",
+    "semantic_hash": ""
   },
   "postcss.config.js": {
     "mtime": 1791490625.7497087,
@@ -100,12 +100,6 @@
     "seen": 1791493656.849099,
     "ast_hash": "a61d3a6a99946217f11a775af4b15ce0",
     "semantic_hash": "a61d3a6a99946217f11a775af4b15ce0"
-  },
-  "src/components/game/ThreeScene.tsx": {
-    "mtime": 1791497809.479041,
-    "seen": 1791497976.008781,
-    "ast_hash": "6c122cfdd00beaf754e616e8852b52d9",
-    "semantic_hash": ""
   },
   "src/components/teacher/TeacherDashboard.tsx": {
     "mtime": 1791493603.873774,
@@ -192,9 +186,9 @@
     "semantic_hash": "767b2e9abe6452170cdc399ca052cfbc"
   },
   "vite.config.ts": {
-    "mtime": 1791710197.8770535,
-    "seen": 1791712361.917889,
-    "ast_hash": "cb0380c19807b8ae2a9584e5c01a5f29",
+    "mtime": 1791713656.8129642,
+    "seen": 1791715444.61568,
+    "ast_hash": "0e34beddf5a6b6260ac55766545f2796",
     "semantic_hash": ""
   },
   ".agents/rules/ste.md": {
@@ -402,9 +396,9 @@
     "semantic_hash": "328de20931b3b3abb436e705532dec92"
   },
   "src/components/world/WorldCanvas.tsx": {
-    "mtime": 1791712203.271171,
-    "seen": 1791712361.917838,
-    "ast_hash": "e0f9073b909da9a68657cd6ff3f6adbc",
+    "mtime": 1791713451.1304286,
+    "seen": 1791715444.615628,
+    "ast_hash": "37ca989a921b5fcacff0756abea0b385",
     "semantic_hash": ""
   },
   "src/components/world/levelStations.ts": {
@@ -426,9 +420,9 @@
     "semantic_hash": ""
   },
   "src/components/world/proceduralCity.ts": {
-    "mtime": 1791712285.0438647,
-    "seen": 1791712361.917863,
-    "ast_hash": "e88637593a6bca6732574384a8cc14d5",
+    "mtime": 1791713425.1310868,
+    "seen": 1791715444.615654,
+    "ast_hash": "e74d4c7f4a8d10aba4bab99389bdba6d",
     "semantic_hash": ""
   },
   "src/components/world/thirdPersonCamera.ts": {
@@ -582,9 +576,9 @@
     "semantic_hash": ""
   },
   "src/components/world/items/createItemMesh.ts": {
-    "mtime": 1791623848.5786037,
-    "seen": 1791626423.098645,
-    "ast_hash": "df707d30bd90adc8b9ae478224e9fada",
+    "mtime": 1791713361.8011348,
+    "seen": 1791715444.6156318,
+    "ast_hash": "fe1603957ace983efe1052bce89a656b",
     "semantic_hash": ""
   },
   "src/components/world/items/defaultMapPlacements.ts": {
@@ -660,9 +654,9 @@
     "semantic_hash": ""
   },
   "src/components/world/items/textures/proceduralTextures.ts": {
-    "mtime": 1791497947.2611501,
-    "seen": 1791497976.008797,
-    "ast_hash": "91630a91de227f444af4fc12101aff8c",
+    "mtime": 1791713333.8661544,
+    "seen": 1791715444.61565,
+    "ast_hash": "7c92f22f1f490db11884c88169754f68",
     "semantic_hash": ""
   },
   "src/components/world/items/types.ts": {
@@ -990,9 +984,9 @@
     "semantic_hash": ""
   },
   "src/components/world/litterScatter.ts": {
-    "mtime": 1791712267.4934304,
-    "seen": 1791712361.9178612,
-    "ast_hash": "bc6eb43479463dfcc29a776664670205",
+    "mtime": 1791713394.1504204,
+    "seen": 1791715444.615652,
+    "ast_hash": "6f99af3ef5285547cb0d2271faaaf986",
     "semantic_hash": ""
   },
   "src/components/world/societyScene.ts": {
@@ -1185,6 +1179,12 @@
     "mtime": 1791710334.5287611,
     "seen": 1791712361.91795,
     "ast_hash": "56dbeb7693984aa25969a853bcd7d3e2",
+    "semantic_hash": ""
+  },
+  "src/components/world/disposeObject3D.ts": {
+    "mtime": 1791713347.6899526,
+    "seen": 1791715444.6156301,
+    "ast_hash": "127339ee16d16da0d61596bc7e49b7df",
     "semantic_hash": ""
   }
 }
