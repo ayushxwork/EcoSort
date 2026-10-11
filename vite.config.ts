@@ -11,9 +11,23 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    manualChunks: {
-      three: ['three', 'three/examples/jsm/loaders/GLTFLoader.js'],
-      react: ['react', 'react-dom'],
+    rollupOptions: {
+      output: {
+        // Split three + react out of entry/dynamic chunks so game-logic
+        // deploys do not re-send the Three.js payload to returning players.
+        // Normalize separators so the matcher works on Windows and POSIX.
+        manualChunks(id: string) {
+          const normalized = id.split('\\').join('/');
+          if (normalized.includes('node_modules/three')) return 'three';
+          if (
+            normalized.includes('node_modules/react-dom') ||
+            normalized.includes('node_modules/react/') ||
+            normalized.includes('node_modules/scheduler')
+          ) {
+            return 'react';
+          }
+        },
+      },
     },
   },
 });
