@@ -18,6 +18,7 @@ import { CleanlinessMeter } from '../game/CleanlinessMeter';
 import { EcoLensOverlay, EcoLensButton } from '../game/EcoLensOverlay';
 import { MissionResultsModal, MissionError } from '../game/MissionResultsModal';
 import { useCountdownTimer } from '../../hooks/useCountdownTimer';
+import { usePersistentBoolean } from '../../hooks/usePersistentBoolean';
 import { useCoarsePointer, useIsPortrait } from '../../hooks/useMobileInput';
 import {
   INITIAL_ECO_LENS_STATE,
@@ -113,8 +114,24 @@ export const WorldPage: React.FC<WorldPageProps> = ({
   const [recentlyUnlockedItem, setRecentlyUnlockedItem] = useState<ItemData | null>(null);
 
   // ── Audio & Accessibility ───────────────────────────────────────────────────
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-  const [slowMode, setSlowMode] = useState<boolean>(false);
+  const [soundEnabled, setSoundEnabled] = usePersistentBoolean('ecosort_sound_enabled', true);
+  const [slowMode, setSlowMode] = usePersistentBoolean('ecosort_slow_mode', false);
+
+  // Keep the audio service in sync with the persisted preferences
+  useEffect(() => {
+    audio.setSoundEnabled(soundEnabled);
+    audio.setSlowMode(slowMode);
+  }, [soundEnabled, slowMode]);
+
+  // Constant background music while the game is on screen
+  useEffect(() => {
+    if (soundEnabled) {
+      audio.startMusic();
+    } else {
+      audio.stopMusic();
+    }
+    return () => audio.stopMusic();
+  }, [soundEnabled]);
 
   // ── World mode ────────────────────────────────────────────────────────────────
   const [worldMode, setWorldMode] = useState<'EXPLORE' | 'STATION_SORT'>('EXPLORE');
@@ -549,17 +566,12 @@ export const WorldPage: React.FC<WorldPageProps> = ({
 
   // ── Accessibility toggles ───────────────────────────────────────────────────
   const handleToggleSound = useCallback(() => {
-    const next = !soundEnabled;
-    setSoundEnabled(next);
-    audio.setSoundEnabled(next);
-    audio.setVoiceEnabled(next);
-  }, [soundEnabled]);
+    setSoundEnabled((prev) => !prev);
+  }, []);
 
   const handleToggleSlowMode = useCallback(() => {
-    const next = !slowMode;
-    setSlowMode(next);
-    audio.setSlowMode(next);
-  }, [slowMode]);
+    setSlowMode((prev) => !prev);
+  }, []);
 
   const handleToggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
